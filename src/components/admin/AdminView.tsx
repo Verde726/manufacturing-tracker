@@ -15,12 +15,15 @@ export const AdminView: React.FC = () => {
     completions,
     sessions,
     addEmployee,
-    addProduct 
+    addProduct,
+    addTask 
   } = useProductionStore();
 
   // Modal states
   const [showAddEmployee, setShowAddEmployee] = useState(false);
   const [showAddProduct, setShowAddProduct] = useState(false);
+  const [showManageTasks, setShowManageTasks] = useState(false);
+  const [showAddTask, setShowAddTask] = useState(false);
 
   // Form states
   const [employeeForm, setEmployeeForm] = useState({
@@ -34,6 +37,13 @@ export const AdminView: React.FC = () => {
     name: '',
     type: 'Cartridge' as Product['type'],
     active: true
+  });
+
+  const [taskForm, setTaskForm] = useState({
+    name: '',
+    quota: 100,
+    productId: '',
+    description: ''
   });
 
   // Handlers
@@ -68,6 +78,23 @@ export const AdminView: React.FC = () => {
     } catch (error) {
       console.error('Failed to add product:', error);
       alert('Failed to add product. Please try again.');
+    }
+  };
+
+  const handleAddTask = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await addTask({
+        name: taskForm.name,
+        quota: taskForm.quota,
+        productId: taskForm.productId,
+        description: taskForm.description
+      });
+      setTaskForm({ name: '', quota: 100, productId: '', description: '' });
+      setShowAddTask(false);
+    } catch (error) {
+      console.error('Failed to add task:', error);
+      alert('Failed to add task. Please try again.');
     }
   };
 
@@ -138,17 +165,27 @@ export const AdminView: React.FC = () => {
             <div className="admin-actions">
               <button 
                 className="btn btn-primary" 
-                onClick={(e) => {
-                  console.log('Add Employee button clicked!', e);
-                  alert('Add Employee button clicked!');
-                  setShowAddEmployee(true);
-                }}
+                onClick={() => setShowAddEmployee(true)}
               >
                 <Plus size={16} />
                 Add Employee
               </button>
-              <button className="btn btn-secondary">Manage Roles</button>
-              <button className="btn btn-secondary">View Access Logs</button>
+              <button 
+                className="btn btn-secondary"
+                onClick={() => {
+                  alert('Manage Roles functionality - Coming Soon!\n\nThis will allow you to configure RBAC roles and permissions.');
+                }}
+              >
+                Manage Roles
+              </button>
+              <button 
+                className="btn btn-secondary"
+                onClick={() => {
+                  alert('View Access Logs functionality - Coming Soon!\n\nThis will show employee access and activity logs.');
+                }}
+              >
+                View Access Logs
+              </button>
             </div>
           </div>
         </div>
@@ -164,17 +201,25 @@ export const AdminView: React.FC = () => {
             <div className="admin-actions">
               <button 
                 className="btn btn-primary"
-                onClick={(e) => {
-                  console.log('Add Product button clicked!', e);
-                  alert('Add Product button clicked!');
-                  setShowAddProduct(true);
-                }}
+                onClick={() => setShowAddProduct(true)}
               >
                 <Plus size={16} />
                 Add Product
               </button>
-              <button className="btn btn-secondary">Manage Tasks</button>
-              <button className="btn btn-secondary">Update Quotas</button>
+              <button 
+                className="btn btn-secondary"
+                onClick={() => setShowManageTasks(true)}
+              >
+                Manage Tasks
+              </button>
+              <button 
+                className="btn btn-secondary"
+                onClick={() => {
+                  alert('Update Quotas functionality - Coming Soon!\n\nThis will allow you to modify task quotas for better production planning.');
+                }}
+              >
+                Update Quotas
+              </button>
             </div>
           </div>
         </div>
@@ -395,6 +440,156 @@ export const AdminView: React.FC = () => {
                 </button>
                 <button type="submit" className="btn btn-primary">
                   Add Product
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Manage Tasks Modal */}
+      {showManageTasks && (
+        <div className="modal-overlay" onClick={() => setShowManageTasks(false)}>
+          <div className="modal-content large" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Manage Tasks</h3>
+              <button 
+                className="btn btn-ghost small"
+                onClick={() => setShowManageTasks(false)}
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="task-management">
+                <div className="task-actions">
+                  <button 
+                    className="btn btn-primary"
+                    onClick={() => setShowAddTask(true)}
+                  >
+                    <Plus size={16} />
+                    Add New Task
+                  </button>
+                </div>
+                
+                <div className="tasks-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Task Name</th>
+                        <th>Product</th>
+                        <th>Quota (UPH)</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {tasks.map((task) => {
+                        const product = products.find(p => p.id === task.productId);
+                        return (
+                          <tr key={task.id}>
+                            <td className="task-name">{task.name}</td>
+                            <td className="product-name">{product?.name || 'Unknown'}</td>
+                            <td className="quota">{task.quota} UPH</td>
+                            <td className="description">{task.description || '-'}</td>
+                            <td className="actions-cell">
+                              <button 
+                                className="btn btn-ghost small"
+                                onClick={() => {
+                                  alert(`Edit task: ${task.name}\n\nFull edit functionality coming soon!`);
+                                }}
+                              >
+                                Edit
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                      {tasks.length === 0 && (
+                        <tr>
+                          <td colSpan={5} className="empty-state">
+                            No tasks defined. Add a task to get started.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Task Modal */}
+      {showAddTask && (
+        <div className="modal-overlay" onClick={() => setShowAddTask(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Add New Task</h3>
+              <button 
+                className="btn btn-ghost small"
+                onClick={() => setShowAddTask(false)}
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <form onSubmit={handleAddTask}>
+              <div className="form-group">
+                <label htmlFor="task-name">Task Name</label>
+                <input
+                  id="task-name"
+                  type="text"
+                  value={taskForm.name}
+                  onChange={(e) => setTaskForm(prev => ({ ...prev, name: e.target.value }))}
+                  required
+                  placeholder="Enter task name (e.g., 'Filling', 'Capping')"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="task-product">Product</label>
+                <select
+                  id="task-product"
+                  value={taskForm.productId}
+                  onChange={(e) => setTaskForm(prev => ({ ...prev, productId: e.target.value }))}
+                  required
+                >
+                  <option value="">Select a product</option>
+                  {products.map((product) => (
+                    <option key={product.id} value={product.id}>
+                      {product.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group">
+                <label htmlFor="task-quota">Quota (Units Per Hour)</label>
+                <input
+                  id="task-quota"
+                  type="number"
+                  min="1"
+                  value={taskForm.quota}
+                  onChange={(e) => setTaskForm(prev => ({ ...prev, quota: parseInt(e.target.value) || 100 }))}
+                  required
+                  placeholder="e.g., 100"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="task-description">Description (Optional)</label>
+                <textarea
+                  id="task-description"
+                  value={taskForm.description}
+                  onChange={(e) => setTaskForm(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Brief description of the task"
+                  rows={3}
+                />
+              </div>
+              <div className="modal-actions">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowAddTask(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  Add Task
                 </button>
               </div>
             </form>

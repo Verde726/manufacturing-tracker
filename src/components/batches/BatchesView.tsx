@@ -25,9 +25,8 @@ export const BatchesView: React.FC = () => {
         </h1>
         <button 
           className="btn btn-primary"
-          onClick={(e) => {
-            console.log('Create New Batch button clicked!', e);
-            alert('Create New Batch button clicked!');
+          onClick={() => {
+            alert('Create New Batch functionality - Coming Soon!\n\nThis will allow you to create new production batches.');
           }}
         >
           <Plus size={16} />
@@ -96,18 +95,16 @@ export const BatchesView: React.FC = () => {
                     <div className="batch-actions">
                       <button 
                         className="btn btn-secondary small"
-                        onClick={(e) => {
-                          console.log('View Details button clicked!', e, batch.id);
-                          alert(`View Details for batch: ${batch.name}`);
+                        onClick={() => {
+                          alert(`View Details for batch: ${batch.name}\n\nDetailed batch view coming soon!`);
                         }}
                       >
                         View Details
                       </button>
                       <button 
                         className="btn btn-primary small"
-                        onClick={(e) => {
-                          console.log('Update Status button clicked!', e, batch.id);
-                          alert(`Update Status for batch: ${batch.name}`);
+                        onClick={() => {
+                          alert(`Update Status for batch: ${batch.name}\n\nBatch status management coming soon!`);
                         }}
                       >
                         Update Status
@@ -163,18 +160,16 @@ export const BatchesView: React.FC = () => {
                       <td className="actions-cell">
                         <button 
                           className="btn btn-ghost small"
-                          onClick={(e) => {
-                            console.log('View button clicked!', e, batch.id);
-                            alert(`View batch: ${batch.name}`);
+                          onClick={() => {
+                            alert(`View batch: ${batch.name}\n\nDetailed batch view coming soon!`);
                           }}
                         >
                           View
                         </button>
                         <button 
                           className="btn btn-ghost small"
-                          onClick={(e) => {
-                            console.log('Edit button clicked!', e, batch.id);
-                            alert(`Edit batch: ${batch.name}`);
+                          onClick={() => {
+                            alert(`Edit batch: ${batch.name}\n\nBatch editing coming soon!`);
                           }}
                         >
                           Edit
