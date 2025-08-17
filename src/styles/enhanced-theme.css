@@ -1,0 +1,237 @@
+/* Enhanced Manufacturing Production Tracker - Visual Design System */
+/* Modern light theme with subtle colors and improved interactions */
+
+:root {
+  /* Enhanced Color Palette */
+  --bg: 248 250 252;           /* Soft off-white */
+  --surface: 255 255 255;      /* Pure white cards */
+  --surface-elevated: 248 250 252;
+  --surface-hover: 241 245 249;
+  --muted: 226 232 240;        /* Subtle gray backgrounds */
+  --border: 203 213 225;       /* Light gray borders */
+  --border-light: 226 232 240;
+  
+  /* Enhanced Text Colors */
+  --text: 15 23 42;            /* Rich dark gray */
+  --text-muted: 71 85 105;     /* Muted gray for secondary text */
+  --text-subtle: 100 116 139;  /* Light gray for hints */
+  
+  /* Primary Brand Colors - Professional Blue */
+  --primary: 59 130 246;       /* Modern blue */
+  --primary-foreground: 255 255 255;
+  --primary-hover: 37 99 235;  /* Darker blue on hover */
+  --primary-active: 29 78 216; /* Even darker on active */
+  --primary-light: 219 234 254; /* Light blue backgrounds */
+  --primary-subtle: 239 246 255; /* Very light blue */
+  
+  /* Secondary Colors - Sophisticated Gray */
+  --secondary: 100 116 139;
+  --secondary-foreground: 255 255 255;
+  --secondary-hover: 71 85 105;
+  --secondary-active: 51 65 85;
+  --secondary-light: 241 245 249;
+  
+  /* Enhanced Status Colors */
+  --success: 34 197 94;        /* Fresh green */
+  --success-foreground: 255 255 255;
+  --success-light: 220 252 231;
+  --success-border: 134 239 172;
+  --success-subtle: 240 253 244;
+  
+  --warning: 251 146 60;       /* Warm amber */
+  --warning-foreground: 255 255 255;
+  --warning-light: 254 243 199;
+  --warning-border: 252 211 77;
+  --warning-subtle: 255 251 235;
+  
+  --danger: 239 68 68;         /* Clean red */
+  --danger-foreground: 255 255 255;
+  --danger-light: 254 226 226;
+  --danger-border: 252 165 165;
+  --danger-subtle: 255 245 245;
+  
+  --info: 59 130 246;          /* Info blue (same as primary) */
+  --info-foreground: 255 255 255;
+  --info-light: 219 234 254;
+  --info-border: 147 197 253;
+  --info-subtle: 239 246 255;
+  
+  /* Manufacturing Specific Status Colors */
+  --status-excellent: 34 197 94;    /* Bright green for >95% */
+  --status-good: 101 163 13;        /* Green for 80-95% */
+  --status-fair: 251 146 60;        /* Amber for 60-80% */
+  --status-poor: 239 68 68;         /* Red for <60% */
+  --status-offline: 100 116 139;    /* Gray for offline */
+  
+  /* Enhanced Shadows */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-focus: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  
+  /* Interactive States */
+  --ring: 59 130 246;
+  --ring-offset: 255 255 255;
+  
+  /* Enhanced Border Radius */
+  --border-radius: 0.5rem;      /* 8px */
+  --border-radius-md: 0.75rem;  /* 12px */
+  --border-radius-lg: 1rem;     /* 16px */
+  --border-radius-xl: 1.25rem;  /* 20px */
+  --border-radius-2xl: 1.5rem;  /* 24px */
+  
+  /* Typography Scale */
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+  --font-size-4xl: 2.25rem;   /* 36px */
+  
+  /* Line Heights */
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 2;
+  
+  /* Letter Spacing */
+  --letter-spacing-tighter: -0.05em;
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
+  --letter-spacing-wider: 0.05em;
+  --letter-spacing-widest: 0.1em;
+  
+  /* Transitions */
+  --transition-fast: 150ms ease-in-out;
+  --transition-normal: 200ms ease-in-out;
+  --transition-slow: 300ms ease-in-out;
+  
+  /* Header & Navigation */
+  --header-bg: 255 255 255 / 0.95;
+  --nav-active: 59 130 246;
+  --nav-hover: 241 245 249;
+  
+  /* Manufacturing Dashboard Colors */
+  --oee-excellent: 34 197 94;      /* >85% OEE */
+  --oee-good: 101 163 13;          /* 70-85% OEE */
+  --oee-fair: 251 146 60;          /* 50-70% OEE */
+  --oee-poor: 239 68 68;           /* <50% OEE */
+  
+  --efficiency-excellent: 34 197 94;   /* >100% efficiency */
+  --efficiency-good: 101 163 13;       /* 90-100% efficiency */
+  --efficiency-fair: 251 146 60;       /* 70-90% efficiency */
+  --efficiency-poor: 239 68 68;        /* <70% efficiency */
+  
+  /* Batch Status Colors */
+  --batch-open: 59 130 246;       /* Blue for open */
+  --batch-progress: 251 146 60;   /* Amber for in progress */
+  --batch-hold: 239 68 68;        /* Red for on hold */
+  --batch-complete: 34 197 94;    /* Green for completed */
+  --batch-closed: 100 116 139;    /* Gray for closed */
+}
+
+/* Enhanced focus and interaction states */
+@media (prefers-reduced-motion: no-preference) {
+  * {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: var(--transition-fast);
+  }
+}
+
+/* High contrast mode adjustments */
+@media (prefers-contrast: high) {
+  :root {
+    --border: 0 0 0;
+    --text-muted: 0 0 0;
+    --shadow-card: 0 0 0 1px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Enhanced focus styles */
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px hsl(var(--ring-offset)), 0 0 0 4px hsl(var(--ring));
+  border-radius: var(--border-radius);
+}
+
+/* Manufacturing-specific color utilities */
+.status-excellent { color: hsl(var(--status-excellent)); }
+.status-good { color: hsl(var(--status-good)); }
+.status-fair { color: hsl(var(--status-fair)); }
+.status-poor { color: hsl(var(--status-poor)); }
+.status-offline { color: hsl(var(--status-offline)); }
+
+.bg-status-excellent { background-color: hsl(var(--status-excellent)); }
+.bg-status-good { background-color: hsl(var(--status-good)); }
+.bg-status-fair { background-color: hsl(var(--status-fair)); }
+.bg-status-poor { background-color: hsl(var(--status-poor)); }
+.bg-status-offline { background-color: hsl(var(--status-offline)); }
+
+/* Batch status utilities */
+.batch-status-open { 
+  background-color: hsl(var(--batch-open) / 0.1);
+  color: hsl(var(--batch-open));
+  border-color: hsl(var(--batch-open) / 0.3);
+}
+
+.batch-status-inprogress { 
+  background-color: hsl(var(--batch-progress) / 0.1);
+  color: hsl(var(--batch-progress));
+  border-color: hsl(var(--batch-progress) / 0.3);
+}
+
+.batch-status-onhold { 
+  background-color: hsl(var(--batch-hold) / 0.1);
+  color: hsl(var(--batch-hold));
+  border-color: hsl(var(--batch-hold) / 0.3);
+}
+
+.batch-status-completed { 
+  background-color: hsl(var(--batch-complete) / 0.1);
+  color: hsl(var(--batch-complete));
+  border-color: hsl(var(--batch-complete) / 0.3);
+}
+
+.batch-status-closed { 
+  background-color: hsl(var(--batch-closed) / 0.1);
+  color: hsl(var(--batch-closed));
+  border-color: hsl(var(--batch-closed) / 0.3);
+}
+
+/* Enhanced gradients for visual interest */
+.gradient-primary {
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-hover)) 100%);
+}
+
+.gradient-success {
+  background: linear-gradient(135deg, hsl(var(--success)) 0%, hsl(var(--status-good)) 100%);
+}
+
+.gradient-warning {
+  background: linear-gradient(135deg, hsl(var(--warning)) 0%, hsl(251 146 60) 100%);
+}
+
+.gradient-danger {
+  background: linear-gradient(135deg, hsl(var(--danger)) 0%, hsl(220 38 57) 100%);
+}
+
+/* Glass morphism effects for modern look */
+.glass {
+  background: hsl(var(--surface) / 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid hsl(var(--border) / 0.5);
+}
+
+.glass-strong {
+  background: hsl(var(--surface) / 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid hsl(var(--border) / 0.8);
+}
