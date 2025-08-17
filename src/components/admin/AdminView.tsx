@@ -1,9 +1,10 @@
 // Manufacturing Production Tracker - Admin View Component
 // Administration and configuration panel
 
-import React from 'react';
-import { Settings, Users, Package, Database, Shield, Download } from 'lucide-react';
+import React, { useState } from 'react';
+import { Settings, Users, Package, Database, Shield, Download, Plus, X } from 'lucide-react';
 import { useProductionStore } from '../../stores/productionStore';
+import type { Employee, Product } from '../../types';
 
 export const AdminView: React.FC = () => {
   const { 
@@ -12,8 +13,63 @@ export const AdminView: React.FC = () => {
     tasks, 
     batches,
     completions,
-    sessions 
+    sessions,
+    addEmployee,
+    addProduct 
   } = useProductionStore();
+
+  // Modal states
+  const [showAddEmployee, setShowAddEmployee] = useState(false);
+  const [showAddProduct, setShowAddProduct] = useState(false);
+
+  // Form states
+  const [employeeForm, setEmployeeForm] = useState({
+    name: '',
+    role: 'Operator' as Employee['role'],
+    shift: 'Day' as Employee['shift'],
+    rbacRoles: ['operator']
+  });
+
+  const [productForm, setProductForm] = useState({
+    name: '',
+    type: 'Cartridge' as Product['type'],
+    active: true
+  });
+
+  // Handlers
+  const handleAddEmployee = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await addEmployee({
+        name: employeeForm.name,
+        role: employeeForm.role,
+        shift: employeeForm.shift,
+        active: true,
+        rbacRoles: employeeForm.rbacRoles
+      });
+      setEmployeeForm({ name: '', role: 'Operator', shift: 'Day', rbacRoles: ['operator'] });
+      setShowAddEmployee(false);
+    } catch (error) {
+      console.error('Failed to add employee:', error);
+      alert('Failed to add employee. Please try again.');
+    }
+  };
+
+  const handleAddProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await addProduct({
+        name: productForm.name,
+        type: productForm.type,
+        active: productForm.active
+      });
+      setProductForm({ name: '', type: 'Cartridge', active: true });
+      setShowAddProduct(false);
+    } catch (error) {
+      console.error('Failed to add product:', error);
+      alert('Failed to add product. Please try again.');
+    }
+  };
 
   const systemStats = {
     employees: employees.length,
@@ -80,7 +136,13 @@ export const AdminView: React.FC = () => {
           <div className="card-content">
             <p>Manage employees, roles, and permissions</p>
             <div className="admin-actions">
-              <button className="btn btn-primary">Add Employee</button>
+              <button 
+                className="btn btn-primary" 
+                onClick={() => setShowAddEmployee(true)}
+              >
+                <Plus size={16} />
+                Add Employee
+              </button>
               <button className="btn btn-secondary">Manage Roles</button>
               <button className="btn btn-secondary">View Access Logs</button>
             </div>
@@ -96,7 +158,13 @@ export const AdminView: React.FC = () => {
           <div className="card-content">
             <p>Configure products, tasks, and quotas</p>
             <div className="admin-actions">
-              <button className="btn btn-primary">Add Product</button>
+              <button 
+                className="btn btn-primary"
+                onClick={() => setShowAddProduct(true)}
+              >
+                <Plus size={16} />
+                Add Product
+              </button>
               <button className="btn btn-secondary">Manage Tasks</button>
               <button className="btn btn-secondary">Update Quotas</button>
             </div>
@@ -210,6 +278,121 @@ export const AdminView: React.FC = () => {
           <li>Automated backup and recovery</li>
         </ul>
       </div>
+
+      {/* Add Employee Modal */}
+      {showAddEmployee && (
+        <div className="modal-overlay" onClick={() => setShowAddEmployee(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Add New Employee</h3>
+              <button 
+                className="btn btn-ghost small"
+                onClick={() => setShowAddEmployee(false)}
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <form onSubmit={handleAddEmployee}>
+              <div className="form-group">
+                <label htmlFor="employee-name">Name</label>
+                <input
+                  id="employee-name"
+                  type="text"
+                  value={employeeForm.name}
+                  onChange={(e) => setEmployeeForm(prev => ({ ...prev, name: e.target.value }))}
+                  required
+                  placeholder="Enter employee name"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="employee-role">Role</label>
+                <select
+                  id="employee-role"
+                  value={employeeForm.role}
+                  onChange={(e) => setEmployeeForm(prev => ({ ...prev, role: e.target.value as Employee['role'] }))}
+                >
+                  <option value="Operator">Operator</option>
+                  <option value="Lead Operator">Lead Operator</option>
+                  <option value="Supervisor">Supervisor</option>
+                  <option value="QA">QA</option>
+                  <option value="Manager">Manager</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label htmlFor="employee-shift">Shift</label>
+                <select
+                  id="employee-shift"
+                  value={employeeForm.shift}
+                  onChange={(e) => setEmployeeForm(prev => ({ ...prev, shift: e.target.value as Employee['shift'] }))}
+                >
+                  <option value="Day">Day</option>
+                  <option value="Night">Night</option>
+                  <option value="Swing">Swing</option>
+                </select>
+              </div>
+              <div className="modal-actions">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowAddEmployee(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  Add Employee
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add Product Modal */}
+      {showAddProduct && (
+        <div className="modal-overlay" onClick={() => setShowAddProduct(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Add New Product</h3>
+              <button 
+                className="btn btn-ghost small"
+                onClick={() => setShowAddProduct(false)}
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <form onSubmit={handleAddProduct}>
+              <div className="form-group">
+                <label htmlFor="product-name">Product Name</label>
+                <input
+                  id="product-name"
+                  type="text"
+                  value={productForm.name}
+                  onChange={(e) => setProductForm(prev => ({ ...prev, name: e.target.value }))}
+                  required
+                  placeholder="Enter product name"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="product-type">Product Type</label>
+                <select
+                  id="product-type"
+                  value={productForm.type}
+                  onChange={(e) => setProductForm(prev => ({ ...prev, type: e.target.value as Product['type'] }))}
+                >
+                  <option value="Cartridge">Cartridge</option>
+                  <option value="AIO Device">AIO Device</option>
+                  <option value="Disposable">Disposable</option>
+                  <option value="Pod">Pod</option>
+                </select>
+              </div>
+              <div className="modal-actions">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowAddProduct(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  Add Product
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
