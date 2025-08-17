@@ -7,8 +7,6 @@ import { useProductionStore } from '../../stores/productionStore';
 import type { Employee, Product } from '../../types';
 
 export const AdminView: React.FC = () => {
-  console.log('AdminView component rendering...');
-  
   const { 
     employees, 
     products, 
@@ -20,13 +18,6 @@ export const AdminView: React.FC = () => {
     addProduct,
     addTask 
   } = useProductionStore();
-  
-  console.log('AdminView store data:', { 
-    employeesCount: employees.length, 
-    productsCount: products.length, 
-    tasksCount: tasks.length,
-    addEmployeeType: typeof addEmployee 
-  });
 
   // Modal states
   const [showAddEmployee, setShowAddEmployee] = useState(false);
@@ -124,29 +115,6 @@ export const AdminView: React.FC = () => {
           System Administration
         </h1>
         <p>Manage system configuration, users, and data</p>
-        
-        {/* DEBUG: Basic click test */}
-        <div style={{ margin: '10px 0', padding: '10px', background: '#f0f0f0', border: '1px solid #ccc' }}>
-          <strong>DEBUG TEST:</strong>
-          <button 
-            style={{ margin: '0 10px', padding: '5px 10px', background: 'red', color: 'white', border: 'none', cursor: 'pointer' }}
-            onClick={() => alert('BASIC BUTTON WORKS!')}
-          >
-            Test Basic Click
-          </button>
-          <button 
-            className="btn btn-primary"
-            onClick={() => alert('CSS BUTTON WORKS!')}
-          >
-            Test CSS Button
-          </button>
-          <button 
-            style={{ margin: '0 10px', padding: '5px 10px', background: 'blue', color: 'white', border: 'none', cursor: 'pointer' }}
-            onClick={() => alert(`Store Data:\nEmployees: ${employees.length}\nProducts: ${products.length}\nTasks: ${tasks.length}\naddEmployee function: ${typeof addEmployee}`)}
-          >
-            Test Store
-          </button>
-        </div>
       </div>
 
       <div className="admin-grid">

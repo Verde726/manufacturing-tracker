@@ -78,8 +78,6 @@ function App() {
     return <LoadingScreen message="Initializing Production Tracker..." />;
   }
 
-  console.log('App rendering with currentTab:', currentTab);
-
   return (
     <ErrorBoundary>
       <Router>
@@ -91,11 +89,6 @@ function App() {
               {currentTab === 'batches' && <BatchesView />}
               {currentTab === 'admin' && <AdminView />}
               {currentTab === 'reports' && <ReportsView />}
-              
-              {/* DEBUG: Show current tab */}
-              <div style={{ position: 'fixed', top: '10px', right: '10px', background: 'yellow', padding: '5px', zIndex: 9999, fontSize: '12px' }}>
-                Current Tab: {currentTab}
-              </div>
             </Layout>
           } />
         </Routes>

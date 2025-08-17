@@ -1,8 +1,8 @@
 // Manufacturing Production Tracker - Batches View Component
 // Batch and lot tracking with genealogy
 
-import React from 'react';
-import { Package, Plus, Calendar, TrendingUp } from 'lucide-react';
+import React, { useState } from 'react';
+import { Package, Plus, Calendar, TrendingUp, X } from 'lucide-react';
 import { useProductionStore } from '../../stores/productionStore';
 
 export const BatchesView: React.FC = () => {
@@ -10,11 +10,54 @@ export const BatchesView: React.FC = () => {
     getOpenBatches, 
     batches, 
     products,
-    getBatchProgress 
+    getBatchProgress,
+    addBatch 
   } = useProductionStore();
 
+  // Modal state
+  const [showCreateBatch, setShowCreateBatch] = useState(false);
+
+  // Form state
+  const [batchForm, setBatchForm] = useState({
+    name: '',
+    productId: '',
+    expectedUnits: 1000,
+    notes: ''
+  });
+
+  // Generate auto batch name
+  const generateBatchName = () => {
+    const today = new Date();
+    const dateStr = today.toISOString().split('T')[0].replace(/-/g, '');
+    const batchCount = batches.filter(b => b.name.startsWith(dateStr)).length + 1;
+    return `${dateStr}-${String(batchCount).padStart(3, '0')}`;
+  };
+
+  // Handle create batch
+  const handleCreateBatch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await addBatch({
+        name: batchForm.name || generateBatchName(),
+        productId: batchForm.productId,
+        expectedUnits: batchForm.expectedUnits,
+        status: 'Open',
+        genealogy: [],
+        notes: batchForm.notes
+      });
+      setBatchForm({ name: '', productId: '', expectedUnits: 1000, notes: '' });
+      setShowCreateBatch(false);
+    } catch (error) {
+      console.error('Failed to create batch:', error);
+      alert('Failed to create batch. Please try again.');
+    }
+  };
+
   const openBatches = getOpenBatches();
-  const allBatches = batches.slice(0, 10); // Show recent 10 batches
+  const recentBatches = batches
+    .filter(b => b.status !== 'Open')
+    .sort((a, b) => new Date(b.created).getTime() - new Date(a.created).getTime())
+    .slice(0, 10); // Show recent 10 non-open batches
 
   return (
     <div className="batches-view">
@@ -25,9 +68,7 @@ export const BatchesView: React.FC = () => {
         </h1>
         <button 
           className="btn btn-primary"
-          onClick={() => {
-            alert('Create New Batch functionality - Coming Soon!\n\nThis will allow you to create new production batches.');
-          }}
+          onClick={() => setShowCreateBatch(true)}
         >
           <Plus size={16} />
           Create New Batch
@@ -121,23 +162,30 @@ export const BatchesView: React.FC = () => {
         <div className="batch-section">
           <h2>
             <TrendingUp size={20} />
-            Recent Batches
+            Recent Batches ({recentBatches.length})
           </h2>
           
-          <div className="batch-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Batch</th>
-                  <th>Product</th>
-                  <th>Status</th>
-                  <th>Progress</th>
-                  <th>Created</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {allBatches.map((batch) => {
+          {recentBatches.length === 0 ? (
+            <div className="empty-state">
+              <Package size={48} />
+              <h3>No Recent Batches</h3>
+              <p>Closed batches will appear here</p>
+            </div>
+          ) : (
+            <div className="batch-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Batch</th>
+                    <th>Product</th>
+                    <th>Status</th>
+                    <th>Progress</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentBatches.map((batch) => {
                   const product = products.find(p => p.id === batch.productId);
                   const progress = getBatchProgress(batch.id);
                   
@@ -181,6 +229,7 @@ export const BatchesView: React.FC = () => {
               </tbody>
             </table>
           </div>
+          )}
         </div>
       </div>
 
@@ -195,6 +244,83 @@ export const BatchesView: React.FC = () => {
           <li>Barcode integration for batch scanning</li>
         </ul>
       </div>
+
+      {/* Create Batch Modal */}
+      {showCreateBatch && (
+        <div className="modal-overlay" onClick={() => setShowCreateBatch(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Create New Batch</h3>
+              <button 
+                className="btn btn-ghost small"
+                onClick={() => setShowCreateBatch(false)}
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <form onSubmit={handleCreateBatch}>
+              <div className="form-group">
+                <label htmlFor="batch-name">Batch Name (Optional)</label>
+                <input
+                  id="batch-name"
+                  type="text"
+                  value={batchForm.name}
+                  onChange={(e) => setBatchForm(prev => ({ ...prev, name: e.target.value }))}
+                  placeholder={`Auto-generated: ${generateBatchName()}`}
+                />
+                <small>Leave blank to auto-generate: YYYYMMDD-001</small>
+              </div>
+              <div className="form-group">
+                <label htmlFor="batch-product">Product *</label>
+                <select
+                  id="batch-product"
+                  value={batchForm.productId}
+                  onChange={(e) => setBatchForm(prev => ({ ...prev, productId: e.target.value }))}
+                  required
+                >
+                  <option value="">Select a product</option>
+                  {products.map((product) => (
+                    <option key={product.id} value={product.id}>
+                      {product.name} ({product.type})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group">
+                <label htmlFor="batch-expected">Expected Units *</label>
+                <input
+                  id="batch-expected"
+                  type="number"
+                  min="1"
+                  value={batchForm.expectedUnits}
+                  onChange={(e) => setBatchForm(prev => ({ ...prev, expectedUnits: parseInt(e.target.value) || 1000 }))}
+                  required
+                  placeholder="1000"
+                />
+                <small>Target number of units to produce in this batch</small>
+              </div>
+              <div className="form-group">
+                <label htmlFor="batch-notes">Notes (Optional)</label>
+                <textarea
+                  id="batch-notes"
+                  value={batchForm.notes}
+                  onChange={(e) => setBatchForm(prev => ({ ...prev, notes: e.target.value }))}
+                  placeholder="Special instructions, quality requirements, etc."
+                  rows={3}
+                />
+              </div>
+              <div className="modal-actions">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowCreateBatch(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  Create Batch
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
