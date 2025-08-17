@@ -1,6 +1,27 @@
 /* Manufacturing Production Tracker - Light Theme Styles */
 /* Professional light theme optimized for bright shop-floor environments */
 
+/* EMERGENCY YELLOW BACKGROUND FIX - FORCE WHITE EVERYWHERE */
+* {
+  background: white !important;
+  background-color: white !important;
+}
+
+body {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+}
+
+#root {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+}
+
+.App {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+}
+
 /* Import design tokens and utilities */
 @import './styles/theme.css';
 @import './styles/enhanced-theme.css';
