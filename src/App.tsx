@@ -28,21 +28,35 @@ function App() {
       try {
         console.log('🚀 Initializing Manufacturing Production Tracker...');
         
-        // Run data migration from legacy localStorage
-        await migrationService.migrateLegacyData();
+        // Run data migration from legacy localStorage (graceful failure)
+        try {
+          const migrationResult = await migrationService.migrateLegacyData();
+          console.log('📊 Migration result:', migrationResult);
+        } catch (migrationError) {
+          console.warn('⚠️ Migration failed, continuing with fresh initialization:', migrationError);
+        }
         
-        // Load all production data
-        await refreshAll();
+        // Load all production data (graceful failure)
+        try {
+          await refreshAll();
+          console.log('📊 Production data loaded');
+        } catch (dataError) {
+          console.warn('⚠️ Failed to load production data, continuing with empty state:', dataError);
+        }
         
         // Check URL parameters for initial tab
-        const urlParams = new URLSearchParams(window.location.search);
-        const tabParam = urlParams.get('tab');
-        const actionParam = urlParams.get('action');
-        
-        if (actionParam === 'clockin') {
-          setCurrentTab('entry');
-        } else if (tabParam && ['entry', 'dashboard', 'batches', 'admin', 'reports'].includes(tabParam)) {
-          setCurrentTab(tabParam);
+        try {
+          const urlParams = new URLSearchParams(window.location.search);
+          const tabParam = urlParams.get('tab');
+          const actionParam = urlParams.get('action');
+          
+          if (actionParam === 'clockin') {
+            setCurrentTab('entry');
+          } else if (tabParam && ['entry', 'dashboard', 'batches', 'admin', 'reports'].includes(tabParam)) {
+            setCurrentTab(tabParam);
+          }
+        } catch (urlError) {
+          console.warn('⚠️ Failed to parse URL parameters:', urlError);
         }
         
         setInitialized(true);
@@ -50,7 +64,7 @@ function App() {
         
       } catch (error) {
         console.error('❌ App initialization failed:', error);
-        // Continue with initialization even if migration fails
+        // Continue with initialization even if everything fails
         setInitialized(true);
       }
     };

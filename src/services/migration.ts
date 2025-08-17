@@ -124,8 +124,17 @@ export class MigrationService {
       const legacyData = this.loadLegacyData();
       
       if (!this.hasLegacyData(legacyData)) {
-        console.log('ℹ️ No legacy data found to migrate');
-        return this.createMigrationStatus(true, 0, [], 'No legacy data found');
+        console.log('ℹ️ No legacy data found to migrate - fresh installation');
+        const freshStatus = this.createMigrationStatus(true, 0, [], 'Fresh installation - no legacy data to migrate');
+        
+        // Save migration status to mark as complete for fresh installations
+        try {
+          await db.migrations.add(freshStatus);
+        } catch (addError) {
+          console.warn('Could not save migration status (fresh install):', addError);
+        }
+        
+        return freshStatus;
       }
 
       // Create backup
@@ -135,15 +144,25 @@ export class MigrationService {
       const result = await this.performMigration(legacyData);
       
       // Save migration status
-      await db.migrations.add(result);
+      try {
+        await db.migrations.add(result);
+      } catch (addError) {
+        console.warn('Could not save migration status (migrated data):', addError);
+      }
       
       console.log('✅ Migration completed successfully:', result);
       return result;
 
     } catch (error) {
       console.error('❌ Migration failed:', error);
-      const failedMigration = this.createMigrationStatus(false, 0, [String(error)]);
-      await db.migrations.add(failedMigration);
+      const failedMigration = this.createMigrationStatus(false, 0, [String(error)], 'Migration failed - continuing with fresh initialization');
+      
+      try {
+        await db.migrations.add(failedMigration);
+      } catch (addError) {
+        console.warn('Could not save failed migration status:', addError);
+      }
+      
       return failedMigration;
     }
   }

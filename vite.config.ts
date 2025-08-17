@@ -24,7 +24,7 @@ export default defineConfig({
           }
         ]
       },
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      includeAssets: ['icon.svg'],
       manifest: {
         name: 'Manufacturing Production Tracker',
         short_name: 'MFG Tracker',
@@ -37,19 +37,19 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: 'pwa-192x192.png',
+            src: '/icon.svg',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/svg+xml'
           },
           {
-            src: 'pwa-512x512.png',
+            src: '/icon.svg',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/svg+xml'
           },
           {
-            src: 'pwa-512x512.png',
+            src: '/icon.svg',
             sizes: '512x512',
-            type: 'image/png',
+            type: 'image/svg+xml',
             purpose: 'any maskable'
           }
         ],
@@ -60,14 +60,14 @@ export default defineConfig({
             short_name: 'Clock In',
             description: 'Start a new work session',
             url: '/?action=clockin',
-            icons: [{ src: 'pwa-192x192.png', sizes: '192x192' }]
+            icons: [{ src: '/icon.svg', sizes: '192x192' }]
           },
           {
             name: 'Dashboard',
             short_name: 'Dashboard',
             description: 'View production analytics',
             url: '/?tab=dashboard',
-            icons: [{ src: 'pwa-192x192.png', sizes: '192x192' }]
+            icons: [{ src: '/icon.svg', sizes: '192x192' }]
           }
         ]
       },
