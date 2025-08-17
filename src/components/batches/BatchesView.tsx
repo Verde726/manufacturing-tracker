@@ -23,7 +23,13 @@ export const BatchesView: React.FC = () => {
           <Package size={24} />
           Batch & Lot Management
         </h1>
-        <button className="btn btn-primary">
+        <button 
+          className="btn btn-primary"
+          onClick={(e) => {
+            console.log('Create New Batch button clicked!', e);
+            alert('Create New Batch button clicked!');
+          }}
+        >
           <Plus size={16} />
           Create New Batch
         </button>
@@ -88,8 +94,24 @@ export const BatchesView: React.FC = () => {
                     </div>
                     
                     <div className="batch-actions">
-                      <button className="btn btn-secondary small">View Details</button>
-                      <button className="btn btn-primary small">Update Status</button>
+                      <button 
+                        className="btn btn-secondary small"
+                        onClick={(e) => {
+                          console.log('View Details button clicked!', e, batch.id);
+                          alert(`View Details for batch: ${batch.name}`);
+                        }}
+                      >
+                        View Details
+                      </button>
+                      <button 
+                        className="btn btn-primary small"
+                        onClick={(e) => {
+                          console.log('Update Status button clicked!', e, batch.id);
+                          alert(`Update Status for batch: ${batch.name}`);
+                        }}
+                      >
+                        Update Status
+                      </button>
                     </div>
                   </div>
                 );
@@ -139,8 +161,24 @@ export const BatchesView: React.FC = () => {
                         {new Date(batch.created).toLocaleDateString()}
                       </td>
                       <td className="actions-cell">
-                        <button className="btn btn-ghost small">View</button>
-                        <button className="btn btn-ghost small">Edit</button>
+                        <button 
+                          className="btn btn-ghost small"
+                          onClick={(e) => {
+                            console.log('View button clicked!', e, batch.id);
+                            alert(`View batch: ${batch.name}`);
+                          }}
+                        >
+                          View
+                        </button>
+                        <button 
+                          className="btn btn-ghost small"
+                          onClick={(e) => {
+                            console.log('Edit button clicked!', e, batch.id);
+                            alert(`Edit batch: ${batch.name}`);
+                          }}
+                        >
+                          Edit
+                        </button>
                       </td>
                     </tr>
                   );

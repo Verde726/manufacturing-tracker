@@ -138,7 +138,11 @@ export const AdminView: React.FC = () => {
             <div className="admin-actions">
               <button 
                 className="btn btn-primary" 
-                onClick={() => setShowAddEmployee(true)}
+                onClick={(e) => {
+                  console.log('Add Employee button clicked!', e);
+                  alert('Add Employee button clicked!');
+                  setShowAddEmployee(true);
+                }}
               >
                 <Plus size={16} />
                 Add Employee
@@ -160,7 +164,11 @@ export const AdminView: React.FC = () => {
             <div className="admin-actions">
               <button 
                 className="btn btn-primary"
-                onClick={() => setShowAddProduct(true)}
+                onClick={(e) => {
+                  console.log('Add Product button clicked!', e);
+                  alert('Add Product button clicked!');
+                  setShowAddProduct(true);
+                }}
               >
                 <Plus size={16} />
                 Add Product
