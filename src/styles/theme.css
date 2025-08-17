@@ -1,0 +1,157 @@
+/* Manufacturing Production Tracker - Design Tokens & Theme System */
+/* Light theme optimized for bright shop-floor environments */
+
+:root {
+  /* Light Theme Color Palette */
+  --bg: 0 0% 100%;
+  --surface: 0 0% 98%;
+  --surface-elevated: 0 0% 96%;
+  --muted: 210 16% 94%;
+  --border: 214 15% 85%;
+  --border-light: 220 13% 91%;
+  
+  /* Text Colors */
+  --text: 222 47% 11%;
+  --text-muted: 215 14% 34%;
+  --text-subtle: 215 14% 50%;
+  
+  /* Interactive Colors */
+  --primary: 222 84% 56%;
+  --primary-foreground: 0 0% 100%;
+  --primary-hover: 222 84% 51%;
+  --primary-active: 222 84% 46%;
+  
+  --secondary: 215 20% 65%;
+  --secondary-foreground: 222 47% 11%;
+  --secondary-hover: 215 20% 60%;
+  --secondary-active: 215 20% 55%;
+  
+  /* Status Colors */
+  --success: 142 72% 29%;
+  --success-foreground: 0 0% 100%;
+  --success-light: 142 72% 95%;
+  --success-border: 142 72% 85%;
+  
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 100%;
+  --warning-light: 38 92% 95%;
+  --warning-border: 38 92% 85%;
+  
+  --danger: 0 84% 60%;
+  --danger-foreground: 0 0% 100%;
+  --danger-light: 0 84% 95%;
+  --danger-border: 0 84% 85%;
+  
+  --info: 217 91% 60%;
+  --info-foreground: 0 0% 100%;
+  --info-light: 217 91% 95%;
+  --info-border: 217 91% 85%;
+  
+  /* Focus Ring */
+  --ring: 222 84% 56%;
+  --ring-offset: 0 0% 100%;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-focus: 0 0 0 3px hsl(var(--ring) / 0.35);
+  
+  /* Layout & Spacing */
+  --border-radius: 0.75rem;
+  --border-radius-lg: 1rem;
+  --border-radius-xl: 1.25rem;
+  
+  /* Manufacturing Status Colors */
+  --status-excellent: 142 72% 29%;
+  --status-good: 142 72% 35%;
+  --status-fair: 38 92% 50%;
+  --status-poor: 0 84% 60%;
+  --status-offline: 215 14% 50%;
+  
+  /* Header & Navigation */
+  --header-bg: 0 0% 100% / 0.8;
+  --nav-active: 222 84% 56%;
+  --nav-hover: 210 16% 94%;
+}
+
+/* Dark theme for future use (scaffolded but not default) */
+[data-theme="dark"] {
+  --bg: 222 47% 11%;
+  --surface: 215 28% 17%;
+  --surface-elevated: 215 28% 19%;
+  --muted: 215 14% 24%;
+  --border: 215 14% 30%;
+  --border-light: 215 14% 26%;
+  
+  --text: 0 0% 95%;
+  --text-muted: 215 20% 65%;
+  --text-subtle: 215 14% 50%;
+  
+  --primary: 217 91% 60%;
+  --primary-foreground: 222 47% 11%;
+  --primary-hover: 217 91% 65%;
+  --primary-active: 217 91% 70%;
+  
+  --ring-offset: 222 47% 11%;
+  --header-bg: 222 47% 11% / 0.8;
+}
+
+/* Base typography scale */
+:root {
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+  
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
+}
+
+/* Global accessibility and motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-duration: 0ms !important;
+  }
+  
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --border: 0 0% 0%;
+    --text-muted: 0 0% 0%;
+  }
+}
+
+/* Focus-visible polyfill support */
+.js-focus-visible :focus:not(.focus-visible) {
+  outline: none;
+}
+
+/* Global focus styles */
+:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Remove default focus styles when focus-visible is supported */
+:focus:not(:focus-visible) {
+  outline: none;
+}
