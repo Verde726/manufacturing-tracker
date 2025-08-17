@@ -1,5 +1,15 @@
 /* EMERGENCY YELLOW BACKGROUND FIX - FORCE WHITE EVERYWHERE */
+html {
+  background: white !important;
+  background-color: white !important;
+}
+
 * {
+  background: white !important;
+  background-color: white !important;
+}
+
+html::before, html::after, body::before, body::after {
   background: white !important;
   background-color: white !important;
 }

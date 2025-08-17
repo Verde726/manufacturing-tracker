@@ -14,6 +14,13 @@ import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import './App.css';
 
 function App() {
+  // EMERGENCY: Force white background with inline styles to override ANY CSS
+  const forceWhiteStyles = {
+    backgroundColor: '#ffffff',
+    background: '#ffffff',
+    minHeight: '100vh',
+    width: '100%'
+  };
   const { 
     currentTab, 
     initialized, 
@@ -116,6 +123,37 @@ function App() {
     }
   };
 
+  // EMERGENCY: Force white background via JavaScript
+  useEffect(() => {
+    const forceWhiteBackground = () => {
+      document.documentElement.style.backgroundColor = '#ffffff';
+      document.documentElement.style.background = '#ffffff';
+      document.body.style.backgroundColor = '#ffffff';
+      document.body.style.background = '#ffffff';
+      
+      // Force white on any element that might have yellow
+      const allElements = document.querySelectorAll('*');
+      allElements.forEach(el => {
+        if (el instanceof HTMLElement) {
+          const computedStyle = window.getComputedStyle(el);
+          if (computedStyle.backgroundColor.includes('255, 255, 0') || 
+              computedStyle.backgroundColor.includes('yellow') ||
+              computedStyle.background.includes('yellow')) {
+            el.style.backgroundColor = '#ffffff';
+            el.style.background = '#ffffff';
+          }
+        }
+      });
+    };
+    
+    // Force white immediately and on any DOM changes
+    forceWhiteBackground();
+    const observer = new MutationObserver(forceWhiteBackground);
+    observer.observe(document.body, { childList: true, subtree: true });
+    
+    return () => observer.disconnect();
+  }, []);
+
   useEffect(() => {
     const initializeApp = async () => {
       try {
@@ -180,21 +218,27 @@ function App() {
   }
 
   return (
-    <ErrorBoundary>
-      <Router>
-        <Routes>
-          <Route path="/" element={
-            <Layout>
-              {currentTab === 'entry' && <EntryView />}
-              {currentTab === 'dashboard' && <DashboardView />}
-              {currentTab === 'batches' && <BatchesView />}
-              {currentTab === 'admin' && <AdminView />}
-              {currentTab === 'reports' && <ReportsView />}
-            </Layout>
-          } />
-        </Routes>
-      </Router>
-    </ErrorBoundary>
+    <div style={forceWhiteStyles}>
+      <ErrorBoundary>
+        <Router>
+          <div style={forceWhiteStyles}>
+            <Routes>
+              <Route path="/" element={
+                <div style={forceWhiteStyles}>
+                  <Layout>
+                    {currentTab === 'entry' && <EntryView />}
+                    {currentTab === 'dashboard' && <DashboardView />}
+                    {currentTab === 'batches' && <BatchesView />}
+                    {currentTab === 'admin' && <AdminView />}
+                    {currentTab === 'reports' && <ReportsView />}
+                  </Layout>
+                </div>
+              } />
+            </Routes>
+          </div>
+        </Router>
+      </ErrorBoundary>
+    </div>
   );
 }
 
