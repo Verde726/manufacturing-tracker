@@ -115,7 +115,6 @@ export const BatchesView: React.FC = () => {
 
   // Handle edit batch
   const handleEditBatch = (batch: Batch) => {
-    console.log('Edit Batch clicked for:', batch.name);
     setSelectedBatch(batch);
     setEditForm({
       name: batch.name,
@@ -124,7 +123,6 @@ export const BatchesView: React.FC = () => {
       notes: batch.notes || ''
     });
     setShowEditBatch(true);
-    console.log('Edit modal should now be open:', true);
   };
 
   // Handle batch edit submission
@@ -790,9 +788,7 @@ export const BatchesView: React.FC = () => {
       )}
 
       {/* Edit Batch Modal */}
-      {showEditBatch && selectedBatch && (() => {
-        console.log('Rendering Edit Batch Modal for:', selectedBatch.name);
-        return (
+      {showEditBatch && selectedBatch && (
         <div className="modal-overlay" onClick={() => setShowEditBatch(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
@@ -877,8 +873,7 @@ export const BatchesView: React.FC = () => {
             </form>
           </div>
         </div>
-        );
-      })()}
+      )}
     </div>
   );
 };
