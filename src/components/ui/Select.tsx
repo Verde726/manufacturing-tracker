@@ -135,7 +135,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(({
 Select.displayName = 'Select';
 
 // Multi-select component (simplified version)
-export interface MultiSelectProps extends Omit<SelectProps, 'options'> {
+export interface MultiSelectProps extends Omit<SelectProps, 'options' | 'onChange'> {
   options: SelectOption[];
   value?: string[];
   onChange?: (values: string[]) => void;
@@ -153,8 +153,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
   maxSelections,
   fullWidth = false,
   className = '',
-  id,
-  ...props
+  id
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const selectId = id || `multiselect-${Math.random().toString(36).substr(2, 9)}`;
@@ -226,7 +225,6 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
-        {...props}
       >
         <span className={`block truncate text-left ${selectedLabels.length === 0 ? 'text-text-muted' : ''}`}>
           {displayText}
@@ -255,7 +253,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
                   first:rounded-t-lg last:rounded-b-lg
                 `}
                 onClick={() => handleOptionToggle(option.value)}
-                disabled={isDisabled}
+                disabled={!!isDisabled}
               >
                 <div className="flex items-center justify-between">
                   <span>{option.label}</span>
