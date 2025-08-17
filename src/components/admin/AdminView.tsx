@@ -2,7 +2,7 @@
 // Administration and configuration panel
 
 import React, { useState } from 'react';
-import { Settings, Users, Package, Database, Shield, Download, Plus, X } from 'lucide-react';
+import { Settings, Users, Package, Database, Shield, Download, Plus, X, Edit3, Trash2, Key } from 'lucide-react';
 import { useProductionStore } from '../../stores/productionStore';
 import type { Employee, Product } from '../../types';
 
@@ -16,7 +16,9 @@ export const AdminView: React.FC = () => {
     sessions,
     addEmployee,
     addProduct,
-    addTask 
+    addTask,
+    updateEmployee,
+    deleteEmployee
   } = useProductionStore();
 
   // Modal states
@@ -24,6 +26,8 @@ export const AdminView: React.FC = () => {
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [showManageTasks, setShowManageTasks] = useState(false);
   const [showAddTask, setShowAddTask] = useState(false);
+  const [showEditEmployee, setShowEditEmployee] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
 
   // Form states
   const [employeeForm, setEmployeeForm] = useState({
@@ -44,6 +48,13 @@ export const AdminView: React.FC = () => {
     quota: 100,
     productId: '',
     description: ''
+  });
+
+  const [editEmployeeForm, setEditEmployeeForm] = useState({
+    name: '',
+    role: 'Operator' as Employee['role'],
+    shift: 'Day' as Employee['shift'],
+    rbacRoles: ['operator']
   });
 
   // Handlers
@@ -96,6 +107,58 @@ export const AdminView: React.FC = () => {
       console.error('Failed to add task:', error);
       alert('Failed to add task. Please try again.');
     }
+  };
+
+  // Employee management handlers
+  const handleEditEmployee = (employee: Employee) => {
+    setSelectedEmployee(employee);
+    setEditEmployeeForm({
+      name: employee.name,
+      role: employee.role,
+      shift: employee.shift,
+      rbacRoles: employee.rbacRoles
+    });
+    setShowEditEmployee(true);
+  };
+
+  const handleUpdateEmployee = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedEmployee) return;
+
+    try {
+      await updateEmployee(selectedEmployee.id, {
+        name: editEmployeeForm.name,
+        role: editEmployeeForm.role,
+        shift: editEmployeeForm.shift,
+        rbacRoles: editEmployeeForm.rbacRoles
+      });
+      setShowEditEmployee(false);
+      setSelectedEmployee(null);
+      setEditEmployeeForm({ name: '', role: 'Operator', shift: 'Day', rbacRoles: ['operator'] });
+    } catch (error) {
+      console.error('Failed to update employee:', error);
+      alert('Failed to update employee. Please try again.');
+    }
+  };
+
+  const handleDeleteEmployee = (employee: Employee) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to delete employee "${employee.name}"?\n\nThis action cannot be undone and will remove all associated data.`
+    );
+    
+    if (confirmed) {
+      try {
+        deleteEmployee(employee.id);
+        alert(`Employee "${employee.name}" has been deleted successfully.`);
+      } catch (error) {
+        console.error('Failed to delete employee:', error);
+        alert('Failed to delete employee. Please try again.');
+      }
+    }
+  };
+
+  const handleManagePermissions = (employee: Employee) => {
+    alert(`Manage Permissions for ${employee.name}\n\nCurrent RBAC Roles: ${employee.rbacRoles.join(', ')}\n\nAdvanced permission management coming soon!\nThis will allow you to configure granular permissions and access controls.`);
   };
 
   const systemStats = {
@@ -310,8 +373,30 @@ export const AdminView: React.FC = () => {
                     <span className="status-badge active">Active</span>
                   </td>
                   <td className="actions-cell">
-                    <button className="btn btn-ghost small">Edit</button>
-                    <button className="btn btn-ghost small">Permissions</button>
+                    <button 
+                      className="btn btn-ghost small"
+                      onClick={() => handleEditEmployee(employee)}
+                      title="Edit employee details"
+                    >
+                      <Edit3 size={14} />
+                      Edit
+                    </button>
+                    <button 
+                      className="btn btn-ghost small"
+                      onClick={() => handleManagePermissions(employee)}
+                      title="Manage permissions and roles"
+                    >
+                      <Key size={14} />
+                      Permissions
+                    </button>
+                    <button 
+                      className="btn btn-danger small"
+                      onClick={() => handleDeleteEmployee(employee)}
+                      title="Delete employee"
+                    >
+                      <Trash2 size={14} />
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -590,6 +675,83 @@ export const AdminView: React.FC = () => {
                 </button>
                 <button type="submit" className="btn btn-primary">
                   Add Task
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Employee Modal */}
+      {showEditEmployee && selectedEmployee && (
+        <div className="modal-overlay" onClick={() => setShowEditEmployee(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>
+                <Edit3 size={20} />
+                Edit Employee: {selectedEmployee.name}
+              </h3>
+              <button 
+                className="btn btn-ghost small"
+                onClick={() => setShowEditEmployee(false)}
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <form onSubmit={handleUpdateEmployee}>
+              <div className="form-group">
+                <label htmlFor="edit-employee-name">Name</label>
+                <input
+                  id="edit-employee-name"
+                  type="text"
+                  value={editEmployeeForm.name}
+                  onChange={(e) => setEditEmployeeForm(prev => ({ ...prev, name: e.target.value }))}
+                  required
+                  placeholder="Enter employee name"
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="edit-employee-role">Role</label>
+                <select
+                  id="edit-employee-role"
+                  value={editEmployeeForm.role}
+                  onChange={(e) => setEditEmployeeForm(prev => ({ ...prev, role: e.target.value as Employee['role'] }))}
+                >
+                  <option value="Operator">Operator</option>
+                  <option value="Lead Operator">Lead Operator</option>
+                  <option value="Supervisor">Supervisor</option>
+                  <option value="QA">QA</option>
+                  <option value="Manager">Manager</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label htmlFor="edit-employee-shift">Shift</label>
+                <select
+                  id="edit-employee-shift"
+                  value={editEmployeeForm.shift}
+                  onChange={(e) => setEditEmployeeForm(prev => ({ ...prev, shift: e.target.value as Employee['shift'] }))}
+                >
+                  <option value="Day">Day</option>
+                  <option value="Night">Night</option>
+                  <option value="Swing">Swing</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label>RBAC Roles</label>
+                <div className="rbac-roles">
+                  {editEmployeeForm.rbacRoles.map(role => (
+                    <span key={role} className="role-badge">{role}</span>
+                  ))}
+                </div>
+                <small>Advanced role management coming soon</small>
+              </div>
+              <div className="modal-actions">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowEditEmployee(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  <Edit3 size={16} />
+                  Update Employee
                 </button>
               </div>
             </form>
