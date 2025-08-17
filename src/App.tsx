@@ -21,7 +21,100 @@ function App() {
     setCurrentTab 
   } = useAppStore();
   
-  const { refreshAll } = useProductionStore();
+  const { 
+    refreshAll, 
+    products, 
+    employees, 
+    tasks,
+    addProduct, 
+    addEmployee, 
+    addTask 
+  } = useProductionStore();
+
+  // Initialize default data if database is empty
+  const initializeDefaultData = async () => {
+    // Check if we already have data
+    if (products.length > 0 && employees.length > 0) {
+      return; // Data already exists
+    }
+    
+    console.log('Creating default data for new installation...');
+    
+    // Create default products
+    if (products.length === 0) {
+      await addProduct({ name: 'HUSH 1.0g Cart', type: 'Cartridge', active: true });
+      await addProduct({ name: 'HUSTLE 1.0g AIO', type: 'AIO Device', active: true });
+      await addProduct({ name: 'Premium Disposable', type: 'Disposable', active: true });
+      await addProduct({ name: 'Pod System', type: 'Pod', active: true });
+    }
+    
+    // Create default employees
+    if (employees.length === 0) {
+      await addEmployee({ 
+        name: 'Demo Operator', 
+        role: 'Operator', 
+        shift: 'Day', 
+        active: true, 
+        rbacRoles: ['operator'] 
+      });
+      await addEmployee({ 
+        name: 'Demo Lead', 
+        role: 'Lead Operator', 
+        shift: 'Day', 
+        active: true, 
+        rbacRoles: ['lead', 'operator'] 
+      });
+      await addEmployee({ 
+        name: 'Demo Supervisor', 
+        role: 'Supervisor', 
+        shift: 'Day', 
+        active: true, 
+        rbacRoles: ['supervisor', 'lead', 'operator'] 
+      });
+    }
+    
+    // Create default tasks (after products are created)
+    if (tasks.length === 0 && products.length > 0) {
+      // Reload products to get the IDs
+      await refreshAll();
+      const cartProduct = products.find(p => p.name.includes('HUSH'));
+      const aioProduct = products.find(p => p.name.includes('HUSTLE'));
+      
+      if (cartProduct) {
+        await addTask({ 
+          name: 'C SOLO Filling', 
+          quota: 120, 
+          productId: cartProduct.id, 
+          description: 'Fill cartridges with C SOLO solution',
+          standardCycleTime: 30 
+        });
+        await addTask({ 
+          name: 'Capping', 
+          quota: 180, 
+          productId: cartProduct.id, 
+          description: 'Apply caps to filled cartridges',
+          standardCycleTime: 20 
+        });
+      }
+      
+      if (aioProduct) {
+        await addTask({ 
+          name: 'Label Stickering', 
+          quota: 200, 
+          productId: aioProduct.id, 
+          description: 'Apply labels to AIO devices',
+          standardCycleTime: 18 
+        });
+        await addTask({ 
+          name: 'Packaging & Sealing', 
+          quota: 150, 
+          productId: aioProduct.id, 
+          description: 'Package and seal AIO devices',
+          standardCycleTime: 24 
+        });
+      }
+    }
+  };
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -42,6 +135,14 @@ function App() {
           console.log('📊 Production data loaded');
         } catch (dataError) {
           console.warn('⚠️ Failed to load production data, continuing with empty state:', dataError);
+        }
+        
+        // Initialize default data if empty (graceful failure)
+        try {
+          await initializeDefaultData();
+          console.log('📦 Default data initialized');
+        } catch (initError) {
+          console.warn('⚠️ Failed to initialize default data:', initError);
         }
         
         // Check URL parameters for initial tab
