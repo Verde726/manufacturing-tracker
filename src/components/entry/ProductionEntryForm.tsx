@@ -198,7 +198,7 @@ export const ProductionEntryForm: React.FC = () => {
   const selectedTaskDetails = allTasks.find(task => task.id === selectedTask);
 
   return (
-    <div className="production-entry-form">
+    <div className="section-card production-entry">
       {/* Success Confirmation */}
       {showConfirmation && lastEntry && (
         <div className="confirmation-banner success">
@@ -219,11 +219,11 @@ export const ProductionEntryForm: React.FC = () => {
         </div>
       )}
 
-      <div className="form-header">
-        <div className="form-title">
+      <div className="card-header">
+        <h2 className="card-title">
           <Plus size={20} />
-          <h2>Production Entry</h2>
-        </div>
+          Production Entry
+        </h2>
         {calculatedEfficiency !== null && (
           <div className={`efficiency-preview ${calculatedEfficiency >= 100 ? 'excellent' : calculatedEfficiency >= 80 ? 'good' : 'poor'}`}>
             <Target size={16} />
@@ -245,14 +245,15 @@ export const ProductionEntryForm: React.FC = () => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="production-entry-form-grid">
+      <form onSubmit={handleSubmit} className="form-grid">
         {/* Employee Selection */}
         <div className="form-group">
-          <label htmlFor="prod-employee">
+          <label className="form-label" htmlFor="prod-employee">
             <User size={16} />
             Employee *
           </label>
           <select
+            className="form-select"
             id="prod-employee"
             value={selectedEmployee}
             onChange={(e) => setSelectedEmployee(e.target.value)}
@@ -269,11 +270,12 @@ export const ProductionEntryForm: React.FC = () => {
 
         {/* Task Selection */}
         <div className="form-group">
-          <label htmlFor="prod-task">
+          <label className="form-label" htmlFor="prod-task">
             <Package size={16} />
             Task *
           </label>
           <select
+            className="form-select"
             id="prod-task"
             value={selectedTask}
             onChange={(e) => setSelectedTask(e.target.value)}
@@ -290,11 +292,12 @@ export const ProductionEntryForm: React.FC = () => {
 
         {/* Start Time */}
         <div className="form-group">
-          <label htmlFor="prod-start-time">
+          <label className="form-label" htmlFor="prod-start-time">
             <Clock size={16} />
             Start Time *
           </label>
           <input
+            className="form-input"
             id="prod-start-time"
             type="time"
             value={startTime}
@@ -305,11 +308,12 @@ export const ProductionEntryForm: React.FC = () => {
 
         {/* End Time */}
         <div className="form-group">
-          <label htmlFor="prod-end-time">
+          <label className="form-label" htmlFor="prod-end-time">
             <Clock size={16} />
             End Time *
           </label>
           <input
+            className="form-input"
             id="prod-end-time"
             type="time"
             value={endTime}
@@ -320,11 +324,12 @@ export const ProductionEntryForm: React.FC = () => {
 
         {/* Quantity Produced */}
         <div className="form-group">
-          <label htmlFor="prod-quantity">
+          <label className="form-label" htmlFor="prod-quantity">
             <Target size={16} />
             Quantity Produced *
           </label>
           <input
+            className="form-input"
             id="prod-quantity"
             type="number"
             min="0"

@@ -12,6 +12,7 @@ import { ReportsView } from './components/reports/ReportsView';
 import { LoadingScreen } from './components/ui/LoadingScreen';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import './App.css';
+import './styles/design-system.css';
 
 function App() {
   // EMERGENCY: Force white background with inline styles to override ANY CSS

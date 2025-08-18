@@ -242,21 +242,25 @@ export const AdminView: React.FC = () => {
   };
 
   return (
-    <div className="admin-view">
-      <div className="admin-header">
-        <h1>
-          <Settings size={24} />
-          System Administration
-        </h1>
-        <p>Manage system configuration, users, and data</p>
+    <div className="main-content">
+      <div className="section-card">
+        <div className="card-header">
+          <h1 className="card-title">
+            <Settings size={24} />
+            System Administration
+          </h1>
+        </div>
+        <p className="card-subtitle">Manage system configuration, users, and data</p>
       </div>
 
       <div className="admin-grid">
         {/* System Overview */}
-        <div className="admin-card">
+        <div className="section-card">
           <div className="card-header">
-            <Database size={20} />
-            <h3>System Overview</h3>
+            <h3 className="card-title">
+              <Database size={20} />
+              System Overview
+            </h3>
           </div>
           <div className="card-content">
             <div className="stats-grid">
@@ -289,10 +293,12 @@ export const AdminView: React.FC = () => {
         </div>
 
         {/* User Management */}
-        <div className="admin-card">
+        <div className="section-card">
           <div className="card-header">
-            <Users size={20} />
-            <h3>User Management</h3>
+            <h3 className="card-title">
+              <Users size={20} />
+              User Management
+            </h3>
           </div>
           <div className="card-content">
             <p>Manage employees, roles, and permissions</p>
@@ -325,10 +331,12 @@ export const AdminView: React.FC = () => {
         </div>
 
         {/* Product Management */}
-        <div className="admin-card">
+        <div className="section-card">
           <div className="card-header">
-            <Package size={20} />
-            <h3>Product Management</h3>
+            <h3 className="card-title">
+              <Package size={20} />
+              Product Management
+            </h3>
           </div>
           <div className="card-content">
             <p>Configure products, tasks, and quotas. Products are listed below.</p>
@@ -359,10 +367,12 @@ export const AdminView: React.FC = () => {
         </div>
 
         {/* Security Settings */}
-        <div className="admin-card">
+        <div className="section-card">
           <div className="card-header">
-            <Shield size={20} />
-            <h3>Security & Access</h3>
+            <h3 className="card-title">
+              <Shield size={20} />
+              Security & Access
+            </h3>
           </div>
           <div className="card-content">
             <p>Role-based access control and security settings</p>
@@ -375,10 +385,12 @@ export const AdminView: React.FC = () => {
         </div>
 
         {/* Data Management */}
-        <div className="admin-card">
+        <div className="section-card">
           <div className="card-header">
-            <Database size={20} />
-            <h3>Data Management</h3>
+            <h3 className="card-title">
+              <Database size={20} />
+              Data Management
+            </h3>
           </div>
           <div className="card-content">
             <p>Import, export, and backup system data</p>
@@ -394,10 +406,12 @@ export const AdminView: React.FC = () => {
         </div>
 
         {/* System Configuration */}
-        <div className="admin-card">
+        <div className="section-card">
           <div className="card-header">
-            <Settings size={20} />
-            <h3>System Configuration</h3>
+            <h3 className="card-title">
+              <Settings size={20} />
+              System Configuration
+            </h3>
           </div>
           <div className="card-content">
             <p>Configure shifts, thresholds, and system settings</p>
@@ -411,14 +425,16 @@ export const AdminView: React.FC = () => {
       </div>
 
       {/* Active Employees List */}
-      <div className="employees-section">
-        <h2>
-          <Users size={20} />
-          Active Employees ({employees.filter(e => e.active).length})
-        </h2>
+      <div className="section-card">
+        <div className="card-header">
+          <h2 className="card-title">
+            <Users size={20} />
+            Active Employees ({employees.filter(e => e.active).length})
+          </h2>
+        </div>
         
         <div className="employees-table">
-          <table>
+          <table className="data-table">
             <thead>
               <tr>
                 <th>Name</th>
@@ -445,7 +461,7 @@ export const AdminView: React.FC = () => {
                   </td>
                   <td className="actions-cell">
                     <button 
-                      className="btn btn-ghost small"
+                      className="btn btn-ghost btn-small"
                       onClick={() => handleEditEmployee(employee)}
                       title="Edit employee details"
                     >
@@ -453,7 +469,7 @@ export const AdminView: React.FC = () => {
                       Edit
                     </button>
                     <button 
-                      className="btn btn-ghost small"
+                      className="btn btn-ghost btn-small"
                       onClick={() => handleManagePermissions(employee)}
                       title="Manage permissions and roles"
                     >
@@ -477,13 +493,15 @@ export const AdminView: React.FC = () => {
       </div>
 
       {/* Products List */}
-      <div className="products-section">
-        <h2>
-          <Package size={20} />
-          Products ({products.length})
-        </h2>
+      <div className="section-card">
+        <div className="card-header">
+          <h2 className="card-title">
+            <Package size={20} />
+            Products ({products.length})
+          </h2>
+        </div>
         <div className="products-table">
-          <table>
+          <table className="data-table">
             <thead>
               <tr>
                 <th>Name</th>
@@ -517,7 +535,7 @@ export const AdminView: React.FC = () => {
                     </td>
                     <td className="actions-cell">
                       <button 
-                        className="btn btn-ghost small"
+                        className="btn btn-ghost btn-small"
                         onClick={() => handleEditProduct(product)}
                         title="Edit product details"
                       >
@@ -549,80 +567,6 @@ export const AdminView: React.FC = () => {
         </div>
       </div>
 
-      {/* Products List */}
-      <div className="products-section">
-        <h2>
-          <Package size={20} />
-          Products ({products.length})
-        </h2>
-        
-        <p style={{color: 'red', fontSize: '20px'}}>DEBUG: Products section is rendering!</p>
-        <div className="products-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Status</th>
-                <th>Tasks</th>
-                <th>Batches</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((product) => {
-                const productTasks = tasks.filter(t => t.productId === product.id);
-                const productBatches = batches.filter(b => b.productId === product.id);
-                const canDelete = productTasks.length === 0 && productBatches.length === 0;
-                
-                return (
-                  <tr key={product.id}>
-                    <td className="product-name">{product.name}</td>
-                    <td className="product-type">{product.type}</td>
-                    <td>
-                      <span className={`status-badge ${product.active ? 'active' : 'inactive'}`}>
-                        {product.active ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
-                    <td className="task-count">
-                      <span className="count-badge">{productTasks.length}</span>
-                    </td>
-                    <td className="batch-count">
-                      <span className="count-badge">{productBatches.length}</span>
-                    </td>
-                    <td className="actions-cell">
-                      <button 
-                        className="btn btn-ghost small"
-                        onClick={() => handleEditProduct(product)}
-                        title="Edit product details"
-                      >
-                        <Edit3 size={14} />
-                        Edit
-                      </button>
-                      <button 
-                        className={`btn btn-ghost small ${canDelete ? 'danger' : 'disabled'}`}
-                        onClick={() => handleDeleteProduct(product)}
-                        disabled={!canDelete}
-                        title={canDelete ? 'Delete product' : 'Cannot delete: product has associated tasks or batches'}
-                      >
-                        <Trash2 size={14} />
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-              {products.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="empty-state">
-                    No products configured. Add a product to get started.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
 
       {/* Add Employee Modal */}
       {showAddEmployee && (
@@ -631,7 +575,7 @@ export const AdminView: React.FC = () => {
             <div className="modal-header">
               <h3>Add New Employee</h3>
               <button 
-                className="btn btn-ghost small"
+                className="btn btn-ghost btn-small"
                 onClick={() => setShowAddEmployee(false)}
               >
                 <X size={16} />
@@ -639,8 +583,9 @@ export const AdminView: React.FC = () => {
             </div>
             <form onSubmit={handleAddEmployee}>
               <div className="form-group">
-                <label htmlFor="employee-name">Name</label>
+                <label className="form-label" htmlFor="employee-name">Name</label>
                 <input
+                  className="form-input"
                   id="employee-name"
                   type="text"
                   value={employeeForm.name}
@@ -650,8 +595,9 @@ export const AdminView: React.FC = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="employee-role">Role</label>
+                <label className="form-label" htmlFor="employee-role">Role</label>
                 <select
+                  className="form-select"
                   id="employee-role"
                   value={employeeForm.role}
                   onChange={(e) => setEmployeeForm(prev => ({ ...prev, role: e.target.value as Employee['role'] }))}
@@ -664,8 +610,9 @@ export const AdminView: React.FC = () => {
                 </select>
               </div>
               <div className="form-group">
-                <label htmlFor="employee-shift">Shift</label>
+                <label className="form-label" htmlFor="employee-shift">Shift</label>
                 <select
+                  className="form-select"
                   id="employee-shift"
                   value={employeeForm.shift}
                   onChange={(e) => setEmployeeForm(prev => ({ ...prev, shift: e.target.value as Employee['shift'] }))}
@@ -695,7 +642,7 @@ export const AdminView: React.FC = () => {
             <div className="modal-header">
               <h3>Add New Product</h3>
               <button 
-                className="btn btn-ghost small"
+                className="btn btn-ghost btn-small"
                 onClick={() => setShowAddProduct(false)}
               >
                 <X size={16} />
@@ -703,8 +650,9 @@ export const AdminView: React.FC = () => {
             </div>
             <form onSubmit={handleAddProduct}>
               <div className="form-group">
-                <label htmlFor="product-name">Product Name</label>
+                <label className="form-label" htmlFor="product-name">Product Name</label>
                 <input
+                  className="form-input"
                   id="product-name"
                   type="text"
                   value={productForm.name}
@@ -714,8 +662,9 @@ export const AdminView: React.FC = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="product-type">Product Type</label>
+                <label className="form-label" htmlFor="product-type">Product Type</label>
                 <select
+                  className="form-select"
                   id="product-type"
                   value={productForm.type}
                   onChange={(e) => setProductForm(prev => ({ ...prev, type: e.target.value as Product['type'] }))}
@@ -746,7 +695,7 @@ export const AdminView: React.FC = () => {
             <div className="modal-header">
               <h3>Manage Tasks</h3>
               <button 
-                className="btn btn-ghost small"
+                className="btn btn-ghost btn-small"
                 onClick={() => setShowManageTasks(false)}
               >
                 <X size={16} />
@@ -786,7 +735,7 @@ export const AdminView: React.FC = () => {
                             <td className="description">{task.description || '-'}</td>
                             <td className="actions-cell">
                               <button 
-                                className="btn btn-ghost small"
+                                className="btn btn-ghost btn-small"
                                 onClick={() => {
                                   alert(`Edit task: ${task.name}\n\nTask editing available in admin panel.`);
                                 }}
@@ -820,7 +769,7 @@ export const AdminView: React.FC = () => {
             <div className="modal-header">
               <h3>Add New Task</h3>
               <button 
-                className="btn btn-ghost small"
+                className="btn btn-ghost btn-small"
                 onClick={() => setShowAddTask(false)}
               >
                 <X size={16} />
@@ -828,8 +777,9 @@ export const AdminView: React.FC = () => {
             </div>
             <form onSubmit={handleAddTask}>
               <div className="form-group">
-                <label htmlFor="task-name">Task Name</label>
+                <label className="form-label" htmlFor="task-name">Task Name</label>
                 <input
+                  className="form-input"
                   id="task-name"
                   type="text"
                   value={taskForm.name}
@@ -839,8 +789,9 @@ export const AdminView: React.FC = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="task-product">Product</label>
+                <label className="form-label" htmlFor="task-product">Product</label>
                 <select
+                  className="form-select"
                   id="task-product"
                   value={taskForm.productId}
                   onChange={(e) => setTaskForm(prev => ({ ...prev, productId: e.target.value }))}
@@ -855,8 +806,9 @@ export const AdminView: React.FC = () => {
                 </select>
               </div>
               <div className="form-group">
-                <label htmlFor="task-quota">Quota (Units Per Hour)</label>
+                <label className="form-label" htmlFor="task-quota">Quota (Units Per Hour)</label>
                 <input
+                  className="form-input"
                   id="task-quota"
                   type="number"
                   min="1"
@@ -867,8 +819,9 @@ export const AdminView: React.FC = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="task-description">Description (Optional)</label>
+                <label className="form-label" htmlFor="task-description">Description (Optional)</label>
                 <textarea
+                  className="form-input"
                   id="task-description"
                   value={taskForm.description}
                   onChange={(e) => setTaskForm(prev => ({ ...prev, description: e.target.value }))}
@@ -899,7 +852,7 @@ export const AdminView: React.FC = () => {
                 Edit Employee: {selectedEmployee.name}
               </h3>
               <button 
-                className="btn btn-ghost small"
+                className="btn btn-ghost btn-small"
                 onClick={() => setShowEditEmployee(false)}
               >
                 <X size={16} />
@@ -907,8 +860,9 @@ export const AdminView: React.FC = () => {
             </div>
             <form onSubmit={handleUpdateEmployee}>
               <div className="form-group">
-                <label htmlFor="edit-employee-name">Name</label>
+                <label className="form-label" htmlFor="edit-employee-name">Name</label>
                 <input
+                  className="form-input"
                   id="edit-employee-name"
                   type="text"
                   value={editEmployeeForm.name}
@@ -918,8 +872,9 @@ export const AdminView: React.FC = () => {
                 />
               </div>
               <div className="form-group">
-                <label htmlFor="edit-employee-role">Role</label>
+                <label className="form-label" htmlFor="edit-employee-role">Role</label>
                 <select
+                  className="form-select"
                   id="edit-employee-role"
                   value={editEmployeeForm.role}
                   onChange={(e) => setEditEmployeeForm(prev => ({ ...prev, role: e.target.value as Employee['role'] }))}
@@ -932,8 +887,9 @@ export const AdminView: React.FC = () => {
                 </select>
               </div>
               <div className="form-group">
-                <label htmlFor="edit-employee-shift">Shift</label>
+                <label className="form-label" htmlFor="edit-employee-shift">Shift</label>
                 <select
+                  className="form-select"
                   id="edit-employee-shift"
                   value={editEmployeeForm.shift}
                   onChange={(e) => setEditEmployeeForm(prev => ({ ...prev, shift: e.target.value as Employee['shift'] }))}
@@ -944,7 +900,7 @@ export const AdminView: React.FC = () => {
                 </select>
               </div>
               <div className="form-group">
-                <label>RBAC Roles</label>
+                <label className="form-label">RBAC Roles</label>
                 <div className="rbac-roles">
                   {editEmployeeForm.rbacRoles.map(role => (
                     <span key={role} className="role-badge">{role}</span>
@@ -977,7 +933,7 @@ export const AdminView: React.FC = () => {
                 Edit Product: {selectedProduct.name}
               </h3>
               <button 
-                className="btn btn-ghost small"
+                className="btn btn-ghost btn-small"
                 onClick={() => setShowEditProduct(false)}
               >
                 <X size={16} />
@@ -986,8 +942,9 @@ export const AdminView: React.FC = () => {
             
             <form onSubmit={handleUpdateProduct}>
               <div className="form-group">
-                <label htmlFor="edit-product-name">Product Name *</label>
+                <label className="form-label" htmlFor="edit-product-name">Product Name *</label>
                 <input
+                  className="form-input"
                   id="edit-product-name"
                   type="text"
                   value={editProductForm.name}
@@ -998,8 +955,9 @@ export const AdminView: React.FC = () => {
               </div>
               
               <div className="form-group">
-                <label htmlFor="edit-product-type">Product Type *</label>
+                <label className="form-label" htmlFor="edit-product-type">Product Type *</label>
                 <select
+                  className="form-select"
                   id="edit-product-type"
                   value={editProductForm.type}
                   onChange={(e) => setEditProductForm(prev => ({ ...prev, type: e.target.value as Product['type'] }))}
@@ -1015,8 +973,9 @@ export const AdminView: React.FC = () => {
               </div>
               
               <div className="form-group">
-                <label className="checkbox-label">
+                <label className="form-label" className="checkbox-label">
                   <input
+                  className="form-input"
                     type="checkbox"
                     checked={editProductForm.active}
                     onChange={(e) => setEditProductForm(prev => ({ ...prev, active: e.target.checked }))}

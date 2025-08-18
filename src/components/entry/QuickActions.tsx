@@ -96,9 +96,9 @@ export const QuickActions: React.FC = () => {
   ];
 
   return (
-    <div className="quick-actions">
-      <div className="quick-actions-header">
-        <h3>Quick Actions</h3>
+    <div className="section-card sidebar-card">
+      <div className="card-header">
+        <h3 className="card-title">Quick Actions</h3>
       </div>
       
       <div className="actions-grid">
@@ -107,7 +107,9 @@ export const QuickActions: React.FC = () => {
           return (
             <button
               key={action.id}
-              className={`quick-action ${action.className}`}
+              className={`btn ${action.className === 'action-warning' ? 'btn-warning' : 
+                        action.className === 'action-disabled' ? 'btn-secondary' :
+                        action.className === 'action-secondary' ? 'btn-secondary' : 'btn-ghost'} btn-small`}
               onClick={action.action}
               title={action.label}
               disabled={action.disabled}
