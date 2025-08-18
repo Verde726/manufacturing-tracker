@@ -385,6 +385,36 @@
   gap: 8px;
 }
 
+/* Checkbox Styling */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 2px solid var(--color-border);
+  background: var(--color-surface);
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"]:checked {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.checkbox-label input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
 /* ========================================
    ENHANCED BUTTON SYSTEM
    ======================================== */

@@ -973,9 +973,8 @@ export const AdminView: React.FC = () => {
               </div>
               
               <div className="form-group">
-                <label className="form-label" className="checkbox-label">
+                <label className="checkbox-label">
                   <input
-                  className="form-input"
                     type="checkbox"
                     checked={editProductForm.active}
                     onChange={(e) => setEditProductForm(prev => ({ ...prev, active: e.target.checked }))}
