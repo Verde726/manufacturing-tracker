@@ -90,6 +90,7 @@ interface ProductionStoreState {
   loadCompletions: (dateRange?: [string, string]) => Promise<void>;
   addCompletion: (completion: Omit<Completion, 'id' | 'duration' | 'uph' | 'lamportTimestamp' | 'lastModified' | 'syncStatus'>) => Promise<Completion>;
   updateCompletion: (id: string, updates: Partial<Completion>) => Promise<void>;
+  deleteCompletion: (id: string) => Promise<void>;
   
   // Quality Events
   loadQualityEvents: () => Promise<void>;
@@ -519,6 +520,26 @@ export const useProductionStore = create<ProductionStoreState>()(
           }
         });
       },
+
+      deleteCompletion: async (id) => {
+        try {
+          // Remove from database
+          await db.completions.delete(id);
+          
+          // Remove from state
+          set((state) => {
+            const index = state.completions.findIndex((c: Completion) => c.id === id);
+            if (index !== -1) {
+              state.completions.splice(index, 1);
+            }
+          });
+          
+          console.log('Completion deleted successfully:', id);
+        } catch (error) {
+          console.error('Failed to delete completion:', error);
+          throw error;
+        }
+      },
       
       // Quality Event actions
       loadQualityEvents: async () => {
@@ -803,6 +824,7 @@ export const useProductionActions = () => useProductionStore((state) => ({
   loadCompletions: state.loadCompletions,
   addCompletion: state.addCompletion,
   updateCompletion: state.updateCompletion,
+  deleteCompletion: state.deleteCompletion,
   
   // Quality actions
   loadQualityEvents: state.loadQualityEvents,

@@ -11,7 +11,8 @@ import {
   TrendingUp,
   CheckCircle,
   AlertTriangle,
-  X
+  X,
+  Trash2
 } from 'lucide-react';
 import { useProductionStore } from '../../stores/productionStore';
 
@@ -24,7 +25,8 @@ export const TodaysProduction: React.FC = () => {
     employees,
     tasks,
     products,
-    batches
+    batches,
+    deleteCompletion
   } = useProductionStore();
 
   const completions = getCompletionsToday();
@@ -72,6 +74,30 @@ export const TodaysProduction: React.FC = () => {
     const hours = Math.floor(durationMs / (1000 * 60 * 60));
     const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
     return `${hours}h ${minutes}m`;
+  };
+
+  const handleDeleteEntry = async (completion: any) => {
+    const { employee, task, product } = getCompletionDetails(completion);
+    
+    const confirmMessage = `Are you sure you want to delete this production entry?
+
+Employee: ${employee?.name || 'Unknown'}
+Task: ${task?.name || 'Unknown'} 
+Product: ${product?.name || 'Unknown'}
+Quantity: ${completion.quantity} units
+Time: ${new Date(completion.startTime).toLocaleTimeString()} - ${new Date(completion.endTime).toLocaleTimeString()}
+
+⚠️ This action cannot be undone and will update all daily totals.`;
+
+    if (window.confirm(confirmMessage)) {
+      try {
+        await deleteCompletion(completion.id);
+        // Success feedback will be shown by the automatic re-render
+      } catch (error) {
+        console.error('Failed to delete production entry:', error);
+        alert('❌ Failed to delete production entry. Please try again.');
+      }
+    }
   };
 
   return (
@@ -153,6 +179,7 @@ export const TodaysProduction: React.FC = () => {
                 <th>UPH</th>
                 <th>Efficiency</th>
                 <th>Quality</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -249,6 +276,17 @@ export const TodaysProduction: React.FC = () => {
                           {qualityRate.toFixed(1)}%
                         </span>
                       </div>
+                    </td>
+
+                    <td className="actions-cell">
+                      <button 
+                        className="btn btn-danger btn-small"
+                        onClick={() => handleDeleteEntry(completion)}
+                        title="Delete this production entry"
+                      >
+                        <Trash2 size={14} />
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 );

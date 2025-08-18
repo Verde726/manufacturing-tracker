@@ -477,7 +477,7 @@ export const AdminView: React.FC = () => {
                       Permissions
                     </button>
                     <button 
-                      className="btn btn-danger small"
+                      className="btn btn-danger btn-small"
                       onClick={() => handleDeleteEmployee(employee)}
                       title="Delete employee"
                     >
