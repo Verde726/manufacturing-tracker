@@ -234,13 +234,15 @@ export const ProductionEntryForm: React.FC = () => {
 
       {/* Warning Messages */}
       {duplicateWarning && (
-        <div className="warning-banner">
+        <div className="alert alert-warning">
+          <span>⚠️</span>
           {duplicateWarning}
         </div>
       )}
       
       {efficiencyWarning && (
-        <div className="warning-banner">
+        <div className="alert alert-warning">
+          <span>⚡</span>
           {efficiencyWarning}
         </div>
       )}
@@ -345,21 +347,23 @@ export const ProductionEntryForm: React.FC = () => {
             placeholder="Enter units produced (0-9999)"
             required
           />
-          <small className="form-help">Enter the number of units completed</small>
+          <small className="form-help">📦 Enter the number of units completed</small>
         </div>
 
         {/* Task Info Panel */}
         {selectedTaskDetails && (
-          <div className="task-info">
-            <h3>Task Information</h3>
+          <div className="form-section">
+            <h3 className="form-section-title">
+              🎯 Task Information
+            </h3>
             <div className="task-details">
               <div className="task-detail">
-                <span className="label">Quota:</span>
+                <span className="label">📊 Quota:</span>
                 <span className="value">{selectedTaskDetails.quota} units/hour</span>
               </div>
               {selectedTaskDetails.description && (
                 <div className="task-detail">
-                  <span className="label">Description:</span>
+                  <span className="label">📝 Description:</span>
                   <span className="value">{selectedTaskDetails.description}</span>
                 </div>
               )}
@@ -379,14 +383,14 @@ export const ProductionEntryForm: React.FC = () => {
           </button>
           <button
             type="submit"
-            className={`btn ${duplicateWarning || efficiencyWarning ? 'btn-warning' : 'btn-primary'}`}
+            className={`btn ${duplicateWarning || efficiencyWarning ? 'btn-warning' : 'btn-success'} ${isSubmitting ? 'btn-loading' : ''}`}
             disabled={isSubmitting || !selectedEmployee || !selectedTask || !startTime || !endTime || !quantityProduced}
           >
-            <CheckCircle size={16} />
-            {isSubmitting ? 'Saving...' : 
-             duplicateWarning ? 'Save Anyway (Overlap Detected)' :
-             efficiencyWarning ? 'Save Anyway (Check Efficiency)' :
-             'Save Entry'}
+            {!isSubmitting && <CheckCircle size={16} />}
+            {isSubmitting ? 'Saving Entry...' : 
+             duplicateWarning ? '⚠️ Save Anyway (Overlap Detected)' :
+             efficiencyWarning ? '⚡ Save Anyway (Check Efficiency)' :
+             '💾 Save Entry'}
           </button>
         </div>
       </form>
