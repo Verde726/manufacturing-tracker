@@ -3,6 +3,8 @@
 
 import React from 'react';
 import { ClockInForm } from './ClockInForm';
+import { ProductionEntryForm } from './ProductionEntryForm';
+import { DailySummaryView } from './DailySummaryView';
 import { ActiveSessions } from './ActiveSessions';
 import { TodaysProduction } from './TodaysProduction';
 import { KPICards } from './KPICards';
@@ -22,9 +24,19 @@ export const EntryView: React.FC = () => {
             <ClockInForm />
           </div>
           
+          {/* Production Entry Form */}
+          <div className="entry-section">
+            <ProductionEntryForm />
+          </div>
+          
           {/* Active Sessions */}
           <div className="entry-section">
             <ActiveSessions />
+          </div>
+          
+          {/* Daily Summary View */}
+          <div className="entry-section">
+            <DailySummaryView />
           </div>
           
           {/* Today's Production Log */}

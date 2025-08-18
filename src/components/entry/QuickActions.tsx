@@ -1,34 +1,18 @@
 // Manufacturing Production Tracker - Quick Actions Component
 // Quick action buttons for common tasks
 
-import React from 'react';
-import { Download, Upload, RotateCcw, Focus, Users, Package } from 'lucide-react';
+import React, { useState } from 'react';
+import { RotateCcw, Focus, Users, Package, LogOut } from 'lucide-react';
 import { useAppStore } from '../../stores/appStore';
 import { useProductionStore } from '../../stores/productionStore';
 
 export const QuickActions: React.FC = () => {
   const { focusMode, setFocusMode, setCurrentTab } = useAppStore();
-  const { refreshAll } = useProductionStore();
+  const { refreshAll, getActiveSessions, endSession } = useProductionStore();
+  const [isClockingOutAll, setIsClockingOutAll] = useState(false);
+  
+  const activeSessions = getActiveSessions();
 
-  const handleExportToday = () => {
-    // TODO: Implement CSV export
-    console.log('Export today\'s data');
-  };
-
-  const handleImportCSV = () => {
-    // TODO: Implement CSV import
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.csv';
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
-        console.log('Import CSV file:', file.name);
-        // TODO: Process CSV import
-      }
-    };
-    input.click();
-  };
 
   const handleRefresh = async () => {
     try {
@@ -43,20 +27,43 @@ export const QuickActions: React.FC = () => {
     setFocusMode(!focusMode);
   };
 
+  // Clock out all active sessions
+  const handleClockOutAll = async () => {
+    if (activeSessions.length === 0) {
+      alert('No active sessions to clock out.');
+      return;
+    }
+    
+    const confirmed = window.confirm(
+      `Clock out all ${activeSessions.length} active sessions? This will end all current work sessions.`
+    );
+    
+    if (confirmed) {
+      setIsClockingOutAll(true);
+      try {
+        // Clock out all active sessions
+        for (const session of activeSessions) {
+          await endSession(session.id, 'End of day clock out');
+        }
+        alert(`Successfully clocked out ${activeSessions.length} sessions.`);
+        await refreshAll(); // Refresh data to update UI
+      } catch (error) {
+        console.error('Failed to clock out all sessions:', error);
+        alert('Failed to clock out some sessions. Please try again.');
+      } finally {
+        setIsClockingOutAll(false);
+      }
+    }
+  };
+
   const quickActions = [
     {
-      id: 'export',
-      label: 'Export Today',
-      icon: Download,
-      action: handleExportToday,
-      className: 'action-secondary'
-    },
-    {
-      id: 'import',
-      label: 'Import CSV',
-      icon: Upload,
-      action: handleImportCSV,
-      className: 'action-secondary'
+      id: 'clockoutall',
+      label: `Clock Out All (${activeSessions.length})`,
+      icon: LogOut,
+      action: handleClockOutAll,
+      className: activeSessions.length > 0 ? 'action-warning' : 'action-disabled',
+      disabled: activeSessions.length === 0 || isClockingOutAll
     },
     {
       id: 'refresh',
@@ -103,9 +110,12 @@ export const QuickActions: React.FC = () => {
               className={`quick-action ${action.className}`}
               onClick={action.action}
               title={action.label}
+              disabled={action.disabled}
             >
               <IconComponent size={18} />
-              <span className="action-label">{action.label}</span>
+              <span className="action-label">
+                {action.id === 'clockoutall' && isClockingOutAll ? 'Clocking Out...' : action.label}
+              </span>
             </button>
           );
         })}

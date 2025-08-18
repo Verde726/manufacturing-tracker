@@ -78,14 +78,6 @@ export const DashboardView: React.FC = () => {
         </div>
       </div>
 
-      <div className="coming-soon">
-        <h2>🚧 Advanced Analytics Coming Soon</h2>
-        <p>
-          This dashboard will include comprehensive OEE calculations, FPY tracking, 
-          bottleneck analysis, and real-time Andon alerts. Features are being 
-          implemented according to ISA-95 manufacturing standards.
-        </p>
-      </div>
     </div>
   );
 };

@@ -386,17 +386,6 @@ export const BatchesView: React.FC = () => {
         </div>
       </div>
 
-      <div className="coming-soon">
-        <h2>🚧 Advanced Batch Features Coming Soon</h2>
-        <ul>
-          <li>Batch genealogy tracking</li>
-          <li>Material consumption tracking</li>
-          <li>Quality hold and release workflows</li>
-          <li>Batch splitting and merging</li>
-          <li>Expiration date management</li>
-          <li>Barcode integration for batch scanning</li>
-        </ul>
-      </div>
 
       {/* Create Batch Modal */}
       {showCreateBatch && (

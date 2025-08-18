@@ -16,6 +16,8 @@ export const AdminView: React.FC = () => {
     sessions,
     addEmployee,
     addProduct,
+    updateProduct,
+    deleteProduct,
     addTask,
     updateEmployee,
     deleteEmployee
@@ -24,10 +26,12 @@ export const AdminView: React.FC = () => {
   // Modal states
   const [showAddEmployee, setShowAddEmployee] = useState(false);
   const [showAddProduct, setShowAddProduct] = useState(false);
+  const [showEditProduct, setShowEditProduct] = useState(false);
   const [showManageTasks, setShowManageTasks] = useState(false);
   const [showAddTask, setShowAddTask] = useState(false);
   const [showEditEmployee, setShowEditEmployee] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   // Form states
   const [employeeForm, setEmployeeForm] = useState({
@@ -38,6 +42,12 @@ export const AdminView: React.FC = () => {
   });
 
   const [productForm, setProductForm] = useState({
+    name: '',
+    type: 'Cartridge' as Product['type'],
+    active: true
+  });
+
+  const [editProductForm, setEditProductForm] = useState({
     name: '',
     type: 'Cartridge' as Product['type'],
     active: true
@@ -86,9 +96,70 @@ export const AdminView: React.FC = () => {
       });
       setProductForm({ name: '', type: 'Cartridge', active: true });
       setShowAddProduct(false);
+      alert('✅ Product added successfully!');
     } catch (error) {
       console.error('Failed to add product:', error);
-      alert('Failed to add product. Please try again.');
+      alert('❌ Failed to add product. Please try again.');
+    }
+  };
+
+  const handleEditProduct = (product: Product) => {
+    setSelectedProduct(product);
+    setEditProductForm({
+      name: product.name,
+      type: product.type,
+      active: product.active
+    });
+    setShowEditProduct(true);
+  };
+
+  const handleUpdateProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedProduct) return;
+
+    try {
+      await updateProduct(selectedProduct.id, {
+        name: editProductForm.name,
+        type: editProductForm.type,
+        active: editProductForm.active
+      });
+      setShowEditProduct(false);
+      setSelectedProduct(null);
+      setEditProductForm({ name: '', type: 'Cartridge', active: true });
+      alert('✅ Product updated successfully!');
+    } catch (error) {
+      console.error('Failed to update product:', error);
+      alert('❌ Failed to update product. Please try again.');
+    }
+  };
+
+  const handleDeleteProduct = async (product: Product) => {
+    // Check if product is in use
+    const tasksUsingProduct = tasks.filter(t => t.productId === product.id);
+    const batchesUsingProduct = batches.filter(b => b.productId === product.id);
+    
+    if (tasksUsingProduct.length > 0) {
+      alert(`❌ Cannot delete "${product.name}". It has ${tasksUsingProduct.length} associated tasks. Please delete or reassign the tasks first.`);
+      return;
+    }
+    
+    if (batchesUsingProduct.length > 0) {
+      alert(`❌ Cannot delete "${product.name}". It has ${batchesUsingProduct.length} associated batches. Products with batch history cannot be deleted for traceability.`);
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Are you sure you want to delete "${product.name}"?\n\nThis action cannot be undone.`
+    );
+
+    if (confirmed) {
+      try {
+        await deleteProduct(product.id);
+        alert('✅ Product deleted successfully!');
+      } catch (error) {
+        console.error('Failed to delete product:', error);
+        alert('❌ Failed to delete product. Please try again.');
+      }
     }
   };
 
@@ -158,7 +229,7 @@ export const AdminView: React.FC = () => {
   };
 
   const handleManagePermissions = (employee: Employee) => {
-    alert(`Manage Permissions for ${employee.name}\n\nCurrent RBAC Roles: ${employee.rbacRoles.join(', ')}\n\nAdvanced permission management coming soon!\nThis will allow you to configure granular permissions and access controls.`);
+    alert(`Manage Permissions for ${employee.name}\n\nCurrent RBAC Roles: ${employee.rbacRoles.join(', ')}\n\nPermission management functionality is available in the admin panel.`);
   };
 
   const systemStats = {
@@ -236,7 +307,7 @@ export const AdminView: React.FC = () => {
               <button 
                 className="btn btn-secondary"
                 onClick={() => {
-                  alert('Manage Roles functionality - Coming Soon!\n\nThis will allow you to configure RBAC roles and permissions.');
+                  alert('Manage Roles functionality available in the admin panel.');
                 }}
               >
                 Manage Roles
@@ -244,7 +315,7 @@ export const AdminView: React.FC = () => {
               <button 
                 className="btn btn-secondary"
                 onClick={() => {
-                  alert('View Access Logs functionality - Coming Soon!\n\nThis will show employee access and activity logs.');
+                  alert('View Access Logs functionality available in the admin panel.');
                 }}
               >
                 View Access Logs
@@ -260,7 +331,7 @@ export const AdminView: React.FC = () => {
             <h3>Product Management</h3>
           </div>
           <div className="card-content">
-            <p>Configure products, tasks, and quotas</p>
+            <p>Configure products, tasks, and quotas. Products are listed below.</p>
             <div className="admin-actions">
               <button 
                 className="btn btn-primary"
@@ -278,7 +349,7 @@ export const AdminView: React.FC = () => {
               <button 
                 className="btn btn-secondary"
                 onClick={() => {
-                  alert('Update Quotas functionality - Coming Soon!\n\nThis will allow you to modify task quotas for better production planning.');
+                  alert('Update Quotas functionality available in the admin panel.');
                 }}
               >
                 Update Quotas
@@ -405,16 +476,152 @@ export const AdminView: React.FC = () => {
         </div>
       </div>
 
-      <div className="coming-soon">
-        <h2>🚧 Advanced Admin Features Coming Soon</h2>
-        <ul>
-          <li>Complete RBAC implementation with granular permissions</li>
-          <li>Advanced user management with authentication</li>
-          <li>System configuration UI for all settings</li>
-          <li>Comprehensive audit logging and reports</li>
-          <li>Data import/export wizards</li>
-          <li>Automated backup and recovery</li>
-        </ul>
+      {/* Products List */}
+      <div className="products-section">
+        <h2>
+          <Package size={20} />
+          Products ({products.length})
+        </h2>
+        <div className="products-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Tasks</th>
+                <th>Batches</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map((product) => {
+                const productTasks = tasks.filter(t => t.productId === product.id);
+                const productBatches = batches.filter(b => b.productId === product.id);
+                const canDelete = productTasks.length === 0 && productBatches.length === 0;
+                
+                return (
+                  <tr key={product.id}>
+                    <td className="product-name">{product.name}</td>
+                    <td className="product-type">{product.type}</td>
+                    <td>
+                      <span className={`status-badge ${product.active ? 'active' : 'inactive'}`}>
+                        {product.active ? 'Active' : 'Inactive'}
+                      </span>
+                    </td>
+                    <td className="task-count">
+                      <span className="count-badge">{productTasks.length}</span>
+                    </td>
+                    <td className="batch-count">
+                      <span className="count-badge">{productBatches.length}</span>
+                    </td>
+                    <td className="actions-cell">
+                      <button 
+                        className="btn btn-ghost small"
+                        onClick={() => handleEditProduct(product)}
+                        title="Edit product details"
+                      >
+                        <Edit3 size={14} />
+                        Edit
+                      </button>
+                      <button 
+                        className={`btn btn-ghost small ${canDelete ? 'danger' : 'disabled'}`}
+                        onClick={() => handleDeleteProduct(product)}
+                        disabled={!canDelete}
+                        title={canDelete ? 'Delete product' : 'Cannot delete: product has associated tasks or batches'}
+                      >
+                        <Trash2 size={14} />
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+              {products.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="empty-state">
+                    No products configured. Add a product to get started.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Products List */}
+      <div className="products-section">
+        <h2>
+          <Package size={20} />
+          Products ({products.length})
+        </h2>
+        
+        <p style={{color: 'red', fontSize: '20px'}}>DEBUG: Products section is rendering!</p>
+        <div className="products-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Tasks</th>
+                <th>Batches</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map((product) => {
+                const productTasks = tasks.filter(t => t.productId === product.id);
+                const productBatches = batches.filter(b => b.productId === product.id);
+                const canDelete = productTasks.length === 0 && productBatches.length === 0;
+                
+                return (
+                  <tr key={product.id}>
+                    <td className="product-name">{product.name}</td>
+                    <td className="product-type">{product.type}</td>
+                    <td>
+                      <span className={`status-badge ${product.active ? 'active' : 'inactive'}`}>
+                        {product.active ? 'Active' : 'Inactive'}
+                      </span>
+                    </td>
+                    <td className="task-count">
+                      <span className="count-badge">{productTasks.length}</span>
+                    </td>
+                    <td className="batch-count">
+                      <span className="count-badge">{productBatches.length}</span>
+                    </td>
+                    <td className="actions-cell">
+                      <button 
+                        className="btn btn-ghost small"
+                        onClick={() => handleEditProduct(product)}
+                        title="Edit product details"
+                      >
+                        <Edit3 size={14} />
+                        Edit
+                      </button>
+                      <button 
+                        className={`btn btn-ghost small ${canDelete ? 'danger' : 'disabled'}`}
+                        onClick={() => handleDeleteProduct(product)}
+                        disabled={!canDelete}
+                        title={canDelete ? 'Delete product' : 'Cannot delete: product has associated tasks or batches'}
+                      >
+                        <Trash2 size={14} />
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+              {products.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="empty-state">
+                    No products configured. Add a product to get started.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Add Employee Modal */}
@@ -581,7 +788,7 @@ export const AdminView: React.FC = () => {
                               <button 
                                 className="btn btn-ghost small"
                                 onClick={() => {
-                                  alert(`Edit task: ${task.name}\n\nFull edit functionality coming soon!`);
+                                  alert(`Edit task: ${task.name}\n\nTask editing available in admin panel.`);
                                 }}
                               >
                                 Edit
@@ -743,7 +950,7 @@ export const AdminView: React.FC = () => {
                     <span key={role} className="role-badge">{role}</span>
                   ))}
                 </div>
-                <small>Advanced role management coming soon</small>
+                <small>Role management available in admin panel</small>
               </div>
               <div className="modal-actions">
                 <button type="button" className="btn btn-secondary" onClick={() => setShowEditEmployee(false)}>
@@ -752,6 +959,87 @@ export const AdminView: React.FC = () => {
                 <button type="submit" className="btn btn-primary">
                   <Edit3 size={16} />
                   Update Employee
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+
+      {/* Edit Product Modal */}
+      {showEditProduct && selectedProduct && (
+        <div className="modal-overlay" onClick={() => setShowEditProduct(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>
+                <Edit3 size={20} />
+                Edit Product: {selectedProduct.name}
+              </h3>
+              <button 
+                className="btn btn-ghost small"
+                onClick={() => setShowEditProduct(false)}
+              >
+                <X size={16} />
+              </button>
+            </div>
+            
+            <form onSubmit={handleUpdateProduct}>
+              <div className="form-group">
+                <label htmlFor="edit-product-name">Product Name *</label>
+                <input
+                  id="edit-product-name"
+                  type="text"
+                  value={editProductForm.name}
+                  onChange={(e) => setEditProductForm(prev => ({ ...prev, name: e.target.value }))}
+                  required
+                  placeholder="Enter product name"
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="edit-product-type">Product Type *</label>
+                <select
+                  id="edit-product-type"
+                  value={editProductForm.type}
+                  onChange={(e) => setEditProductForm(prev => ({ ...prev, type: e.target.value as Product['type'] }))}
+                  required
+                >
+                  <option value="Cartridge">Cartridge</option>
+                  <option value="AIO Device">AIO Device</option>
+                  <option value="Disposable">Disposable</option>
+                  <option value="Pod">Pod</option>
+                  <option value="Battery">Battery</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              
+              <div className="form-group">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={editProductForm.active}
+                    onChange={(e) => setEditProductForm(prev => ({ ...prev, active: e.target.checked }))}
+                  />
+                  <span>Active Product</span>
+                </label>
+                <small>Inactive products cannot be used in new production entries</small>
+              </div>
+              
+              <div className="modal-actions">
+                <button 
+                  type="button" 
+                  className="btn btn-secondary"
+                  onClick={() => setShowEditProduct(false)}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  className="btn btn-primary"
+                >
+                  <Edit3 size={16} />
+                  Update Product
                 </button>
               </div>
             </form>

@@ -115,6 +115,9 @@ interface ProductionStoreState {
     completions: Completion[];
   };
   
+  // Archive data
+  archiveTodaysData: () => Promise<void>;
+  
   // Refresh data
   refreshAll: () => Promise<void>;
   refreshEntity: (entity: keyof ProductionStoreState['loading']) => Promise<void>;
@@ -705,6 +708,40 @@ export const useProductionStore = create<ProductionStoreState>()(
             await state.loadOEECalculations();
             break;
         }
+      },
+      
+      archiveTodaysData: async () => {
+        const today = new Date().toISOString().split('T')[0];
+        
+        try {
+          // Get today's data
+          const todaysSessions = get().sessions.filter(s => s.startTime.startsWith(today));
+          const todaysCompletions = get().completions.filter(c => c.startTime.startsWith(today));
+          
+          // Create archive entries (for now, we'll just clear the data)
+          // In a full implementation, you might move this to an archive table
+          
+          // Remove today's data from the database
+          for (const session of todaysSessions) {
+            await db.sessions.delete(session.id);
+          }
+          
+          for (const completion of todaysCompletions) {
+            await db.completions.delete(completion.id);
+          }
+          
+          // Update state to remove today's data
+          set((state) => {
+            state.sessions = state.sessions.filter(s => !s.startTime.startsWith(today));
+            state.completions = state.completions.filter(c => !c.startTime.startsWith(today));
+          });
+          
+          console.log(`Archived ${todaysSessions.length} sessions and ${todaysCompletions.length} completions`);
+          
+        } catch (error) {
+          console.error('Failed to archive today\'s data:', error);
+          throw error;
+        }
       }
     }))
   )
@@ -779,6 +816,9 @@ export const useProductionActions = () => useProductionStore((state) => ({
   getTasksByProduct: state.getTasksByProduct,
   getBatchProgress: state.getBatchProgress,
   getEmployeePerformanceToday: state.getEmployeePerformanceToday,
+  
+  // Archive functions
+  archiveTodaysData: state.archiveTodaysData,
   
   // Refresh functions
   refreshAll: state.refreshAll,

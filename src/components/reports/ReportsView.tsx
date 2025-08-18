@@ -300,17 +300,6 @@ export const ReportsView: React.FC = () => {
         </div>
       </div>
 
-      <div className="coming-soon">
-        <h2>🚧 Advanced Reporting Coming Soon</h2>
-        <ul>
-          <li>Interactive charts and visualizations</li>
-          <li>Automated report scheduling and delivery</li>
-          <li>Custom report builder with drag-and-drop interface</li>
-          <li>Advanced OEE and FPY analytics with trends</li>
-          <li>Comparative analysis across time periods</li>
-          <li>Integration with external BI tools</li>
-        </ul>
-      </div>
     </div>
   );
 };
